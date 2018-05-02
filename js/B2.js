@@ -66,10 +66,6 @@ function stopTest() {
         times.push(deltaTime);
         document.getElementById("time").innerHTML = "Last time: " + deltaTime + "ms";
     }
-    // something was pressed even though nothing should have been pressed. Show error counter.
-    if (pressedWrong) {
-        document.getElementById("errors").innerHTML = "Errors: " + countErrors;
-    }
     testActive = false;
     // abort experiment after 30 turns.
     if (countTurns == 30) {
@@ -105,7 +101,7 @@ function stopExperiment() {
     document.getElementById("mean").innerHTML = "Mean: " + meanDeltaTime + "ms";
     document.getElementById("sd").innerHTML = "SD: " + standardDerivation + "ms";
     document.getElementById("instruction").innerHTML = "Press SPACE to re-start study!";
-    document.getElementById("errors").innerHTML = "Errors: " + countErrors;
+    document.getElementById("errors").innerHTML = "Error rate: " + countErrors + " in " + countTurns + " turns = " + ((countErrors/countTurns)*100).toFixed(2) + "%";
     times = [];
 }
 
