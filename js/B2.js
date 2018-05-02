@@ -13,17 +13,20 @@ var countTurns = 0;
 var canvas = document.getElementById("shape");
 var ctx = canvas.getContext("2d");
 
+var animals = [{key: "Alpaca", value:true}, {key: "Bear", value:true}, {key: "Dophin", value:true},  ]
 /*
 Start new experiment.
 */
 function startExperiment() {
     experimentActive = true;
+    document.getElementById("text").style.display = "none";
     document.getElementById("time").innerHTML = "";
     document.getElementById("count").innerHTML = "";
     document.getElementById("mean").innerHTML = "";
     document.getElementById("sd").innerHTML = "";
     document.getElementById("errors").innerHTML = "";
-    document.getElementById("instruction").innerHTML = "Press SPACE when triangle is shown! Press 'a' to abort study!";
+    document.getElementById("description").style.display = "none";
+    document.getElementById("instruction").innerHTML = "Drücken Sie die LEERTASTE wenn Sie ein Dreieck sehen. Drücken Sie 'a' zum abbrechen.";
     startTest();
 }
 
@@ -64,8 +67,9 @@ function stopTest() {
     // don't push times where nothing was clicked within 3 seconds of being shown stimulus.
     if (isTriangle || pressedWrong) {
         times.push(deltaTime);
-        document.getElementById("time").innerHTML = "Last time: " + deltaTime + "ms";
+        document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
     }
+    document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
     testActive = false;
     // abort experiment after 30 turns.
     if (countTurns == 30) {
@@ -97,10 +101,11 @@ function stopExperiment() {
     }
     standardDerivation = Math.round(Math.sqrt(standardDerivation / times.length));
     document.getElementById("time").innerHTML = "";
-    document.getElementById("count").innerHTML = "Count: " + times.length;
-    document.getElementById("mean").innerHTML = "Mean: " + meanDeltaTime + "ms";
-    document.getElementById("sd").innerHTML = "SD: " + standardDerivation + "ms";
-    document.getElementById("instruction").innerHTML = "Press SPACE to re-start study!";
+    document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
+    document.getElementById("mean").innerHTML = "Mittelwert: " + meanDeltaTime + "ms";
+    document.getElementById("sd").innerHTML = "Standardabweichung: " + standardDerivation + "ms";
+    document.getElementById("description").style.display = "block";
+    document.getElementById("instruction").innerHTML = "Drücken Sie die LEERTASTE um die Studie erneut zu starten.";
     document.getElementById("errors").innerHTML = "Error rate: " + countErrors + " in " + countTurns + " turns = " + ((countErrors/countTurns)*100).toFixed(2) + "%";
     times = [];
 }

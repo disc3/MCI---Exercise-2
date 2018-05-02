@@ -3,22 +3,37 @@
 <html>
 
 <head>
-	<title>Human Capabilities - Reaction test</title>
+	<title>Menschliche Fähigkeiten - Reaktionsexperiment</title>
 	<script defer src="js/B2.js"></script>
 </head>
 
 <body>
 	<canvas id="shape" width="400" height="400">
-		Your browser does not support the HTML5 canvas tag.</canvas>
+		Ihr Browser unterstützt kein HTML5.</canvas>
 	<h1>
-		<p id="text">User Study</p>
+		<p id="text">Reaktionszeit-Experiment</p>
 	</h1>
-	<h3 id="description">You'll do three seperate tests. Each will be repeated for 30 turns.
-		<br> In the second test, you'll see either a triangle or a circle. Press nothing when a circle is shown (circle will disappear
-		after three seconds).
-		<b style="color:red">Only press SPACE when a triangle is shown.</b>
+	<h3 id="description">Sie werden drei unterschiedliche Tests durchführen. Jeder Test wird 30x durchgeführt.
+		<br> 2. Test: <br>
+		Anleitung: Am Bildschirm werden geometrische Formen angezeigt. <br>
+		<ul>
+			<li>Wenn ein Kreis angezeigt wird: Drücken Sie Nichts. Der Kreis wird nach 3 Sekunden verschwinden.
+				<ul>
+					<li>Wenn Sie nichts drücken bis der Kreis verschwindet, zählt diese Zeit nicht in ihre Schnitte rein. Es zählt jedoch als Wiederholung.</li>
+					<li>Wenn Sie trotzdem eine Taste drücken, wird diese Zeit registiert und wird als Fehler gezählz</li>
+				</ul>
+			</li>
+			<li><b style="color:red">Wenn ein Dreieck angezeigt wird:</b>
+				<ul>
+					<li style="color:red">Drücken Sie so schnell wie möglich die LEERTASTE</li>
+					<li>Sollten Sie nicht die LEERTASTE innerhalb von 3 Sekunden drücken, zählt diese Zeit als Reaktionszeit.</li>
+				</ul>
+			</li>
+			<li>Wenn Nichts angezeigt wird und sie trotzdem die LEERTASTE drücken, zählt dies als Fehler, jedoch nicht als Wiederholung.</li>
+		</ul>
+		
 	</h3>
-	<h1 id="instruction">Press SPACE to start the study!</h1>
+	<h1 id="instruction">Drücken Sie die LEERTASTE um das Experiment zu starten!</h1>
 	<p>
 		<p id="time"></p>
 		<p id="count"></p>
