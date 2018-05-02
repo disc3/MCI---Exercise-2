@@ -1,17 +1,21 @@
 var experimentActive = false; var testActive = false;
 var times = new Array();
 var lastTimeShapeChanged;
-var isTriangle = false;
-// pressed space key even though he should not have
+var isMammal = false;
+// pressed space a key even though he should not have
 var pressedWrong = false;
-// true when user pressed nothing when shown a triangle
-var pressedNothing = false;
-var timer = 0;
 var countErrors = 0;
 var countTurns = 0;
-// canvas to draw shapes
-var canvas = document.getElementById("shape");
-var ctx = canvas.getContext("2d");
+
+var animal;
+
+var animals = [["Alpaca", true], ["Braunbär", true], ["Delfin", true], ["Wal", true],
+["Dachs", true], ["Esel", true], ["Elefant", true], ["Zebra", true], ["Eichhörnchen", true],
+["Flusspferd", true], ["Gorilla", true], ["Koala", true], ["Panda", true], ["Schaf", true], ["Tiger", true],
+["Clown-Fisch", false], ["Seepferdchen", false], ["Piranha", false], ["Blutegel", false],
+["Seestern", false], ["Qualle", false], ["Biene", false], ["Schmtterling", false], ["Skorpion", false],
+["Python", false], ["Gecko", false], ["Frosch", false], ["Chamäleon", false], ["Leguan", false],
+["Waran", false],]
 /*
 Start new experiment.
 */
@@ -24,7 +28,7 @@ function startExperiment() {
     document.getElementById("sd").innerHTML = "";
     document.getElementById("errors").innerHTML = "";
     document.getElementById("description").style.display = "none";
-    document.getElementById("instruction").innerHTML = "Drücken Sie die LEERTASTE wenn Sie ein Dreieck sehen. Drücken Sie 'a' zum abbrechen.";
+    document.getElementById("instruction").innerHTML = "Drücken Sie 't', wenn es sich beim Tier um ein Säugetier handelt, sonst 'f'. Drücken Sie 'a' um die Studie abzubrechen.";
     startTest();
 }
 
@@ -36,7 +40,7 @@ function startTest() {
     console.log("starting test. No stimulus shown..");
     toggleStimulus();
     timeInSeconds = Math.random() * 4 + 2; // 2 - 6s
-    isTriangle = false;
+    isMammal = false;
     pressedWrong = false;
     pressedNothing = false;
     window.setTimeout("showStimulus()", timeInSeconds * 1000);
@@ -50,8 +54,6 @@ function showStimulus() {
     testActive = true;
     // show shape
     toggleStimulus();
-    // set timer that cancels after 3 seconds
-    startInterval();
 }
 
 /*
@@ -62,11 +64,8 @@ function stopTest() {
     var currTime = new Date().getTime();
     var deltaTime = currTime - lastTimeShapeChanged;
     countTurns++;
-    // don't push times where nothing was clicked within 3 seconds of being shown stimulus.
-    if (isTriangle || pressedWrong) {
-        times.push(deltaTime);
-        document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
-    }
+    times.push(deltaTime);
+    document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
     document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
     testActive = false;
     // abort experiment after 30 turns.
@@ -82,10 +81,9 @@ Stops the experiment. Output of measured results.
 */
 function stopExperiment() {
     console.log("stop experiment...");
-    //window.setTimeout("showStimulus()", 0);
+    window.setTimeout("showStimulus()", 0);
     testActive = false;
     experimentActive = false;
-    stopInterval();
     toggleStimulus();
     var meanDeltaTime = 0.0;
     for (var i = 0; i < times.length; ++i) {
@@ -117,9 +115,9 @@ function toggleStimulus() {
         changeStimulus();
         lastTimeShapeChanged = new Date().getTime();
     }
-    // clear canvas, delete drawn shape
+    // clear area
     else {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.getElementById("text").innerHTML = "";
     }
 }
 
@@ -128,64 +126,13 @@ Draws stimulus. Can draw a circle and a triangle. Shape determined by chance.
 */
 function changeStimulus() {
     console.log("change stimulus...");
-    isTriangle = Math.random() <= 0.5;
-    document.getElementById("text").style.display = "none";
-    var sizeOfShape = Math.random() * 200 + 150;
-    if (isTriangle) {
-        // draw triangle
-        ctx.beginPath();
-        ctx.moveTo(10 + sizeOfShape, 10 + sizeOfShape);
-        ctx.lineTo(10 + sizeOfShape / 2, 10);
-        ctx.lineTo(10, 10 + sizeOfShape);
-        ctx.closePath();
-        ctx.stroke();
-    } else {
-        // draw circle
-        ctx.beginPath();
-        ctx.arc(10 + sizeOfShape / 2, 10 + sizeOfShape / 2, sizeOfShape / 2, 0, 2 * Math.PI);
-        ctx.stroke();
-    }
-
-    // the filling color
-    ctx.fillStyle = "#FFCC00";
-    ctx.fill();
+    var ran = parseInt(Math.random() * (animals.length - 1), 10);
+    animal = animals[ran][0];
+    isMammal = animals[ran][1];
+    document.getElementById("text").style.display = "block";
+    document.getElementById("text").innerHTML = animal;
 }
 
-/*
-Function that checks how long stimulus has been shown.
-*/
-function startInterval() {
-    timer = setInterval(checkInterval, 500);
-}
-
-/*
-Resets the timer.
-*/
-function stopInterval() {
-    clearInterval(timer);
-    timer = 0;
-    if (experimentActive) {
-        stopTest();
-    }
-}
-/*
- Stimulus should be viewed for max. 3 seconds.
-*/
-function checkInterval() {
-    // calc time difference since being shown stimulus.
-    var cTime = new Date().getTime();
-    var dTime = cTime - lastTimeShapeChanged;
-    if (dTime > 3000) {
-        if (isTriangle) {
-            console.log("Did not press anything, even though triangle was shown.");
-            pressedNothing = true;
-            countErrors++;
-        } else {
-            console.log("Did not press anything for 3 seconds.");
-        }
-        stopInterval();
-    }
-}
 
 document.onkeydown = onKey;
 function onKey(e) {
@@ -199,21 +146,30 @@ function onKey(e) {
                 console.log("pressed space the first time...");
                 startExperiment();
             }
-            else {
-                if (testActive) {
-                    if (!isTriangle) {
-                        console.log("pressed space when circle was shown...");
-                        countErrors++;
-                        pressedWrong = true;
-                    } else {
-                        console.log("pressed space correctly...");
-                    }
-                    stopInterval();
-                } else {
-                    console.log("pressed space w/o stimulus...");
+            break;
+        case 84: // t
+            if (testActive) {
+                if (!isMammal) {
+                    console.log("Wrong! Pressed true when animal was not a mammal...");
                     countErrors++;
+                    pressedWrong = true;
+                } else {
+                    console.log("Correct! Pressed true...");
                 }
             }
+            stopTest();
+            break;
+        case 70: // f
+            if (testActive) {
+                if (isMammal) {
+                    console.log("Wrong! Pressed false when animal was a mammal...");
+                    countErrors++;
+                    pressedWrong = true;
+                } else {
+                    console.log("Correct! Pressed true...");
+                }
+            }
+            stopTest();
             break;
         case 65: // a
             if (experimentActive) {
