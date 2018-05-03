@@ -6,7 +6,12 @@ var isMammal = false;
 var isWrong = false;
 var countErrors = 0;
 var countTurns = 0;
-
+var highScore = 0;
+var lastScore = 0;
+var totalScore = 0;
+var scoreMultiplicator = 1;
+var answerStreak;
+var deltaTime;
 var animal;
 
 var animals = [["Alpaca", true], ["Braunbär", true], ["Delfin", true], ["Wal", true],
@@ -29,6 +34,7 @@ function startExperiment() {
     document.getElementById("errors").innerHTML = "";
     document.getElementById("description").style.display = "none";
     document.getElementById("instruction").innerHTML = "Drücken Sie 't', wenn es sich beim Tier um ein Säugetier handelt, sonst 'f'. Drücken Sie 'a' um die Studie abzubrechen.";
+    answerStreak = 0;
     startTest();
 }
 
@@ -36,11 +42,11 @@ function startExperiment() {
 Start next turn. Wait 2 to 6 seconds before next stimulus.
 */
 function startTest() {
-    // clear area where animal information shown
+    // clear canvas
     console.log("starting test. No stimulus shown..");
     toggleStimulus();
     timeInSeconds = Math.random() * 4 + 2; // 2 - 6s
-    isMammal = false;
+    isMammal = undefined;
     isWrong = false;
     pressedNothing = false;
     window.setTimeout("showStimulus()", timeInSeconds * 1000);
@@ -52,7 +58,7 @@ Start new experiment.
 function showStimulus() {
     console.log("showing stimulus...");
     testActive = true;
-    // show animal
+    // show shape
     toggleStimulus();
 }
 
@@ -62,17 +68,20 @@ Sttop current turn.
 function stopTest() {
     console.log("stop test...");
     var currTime = new Date().getTime();
-    var deltaTime = currTime - lastTimeShapeChanged;
+    deltaTime = currTime - lastTimeShapeChanged;
     countTurns++;
     times.push(deltaTime);
-    document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
-    document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
+    calcScore();
     testActive = false;
+    document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
+    document.getElementById("count").innerHTML = "Serie: " + answerStreak;
+    toggleStimulus();
     // abort experiment after 30 turns.
     if (countTurns == 30) {
         stopExperiment();
     } else {
-        startTest();
+        // offset next turn by 1 second to allow the user to digest the scoring information
+        window.setTimeout("startTest()", 1000);
     }
 }
 
@@ -97,7 +106,7 @@ function stopExperiment() {
     }
     standardDerivation = Math.round(Math.sqrt(standardDerivation / times.length));
     document.getElementById("time").innerHTML = "";
-    document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
+    document.getElementById("count").innerHTML = "Serie: " + answerStreak;
     document.getElementById("mean").innerHTML = "Mittelwert: " + meanDeltaTime + "ms";
     document.getElementById("sd").innerHTML = "Standardabweichung: " + standardDerivation + "ms";
     document.getElementById("description").style.display = "block";
@@ -115,9 +124,9 @@ function toggleStimulus() {
         changeStimulus();
         lastTimeShapeChanged = new Date().getTime();
     }
-    // clear area
+    // show if answer was correct
     else {
-        document.getElementById("text").innerHTML = "";
+        document.getElementById("text").innerHTML = isWrong ? "falsch" : "korrekt";
     }
 }
 
@@ -132,6 +141,53 @@ function changeStimulus() {
     document.getElementById("text").style.display = "block";
     document.getElementById("text").innerHTML = animal;
 }
+
+function calcScore() {
+    var speedScore = 0;
+    const MAX_SPEED_POINTS = 700;
+    const POINTS_PER_QUESTION = 1000;
+    console.log("Calculating score...");
+
+    if (!isWrong) {
+        answerStreak++;
+    } else {
+        answerStreak = 0;
+    }
+
+    calcMultiplier();
+    // Quick answers will receive bonus points. Speed points turn into negative points after ca. 5 seconds.
+    speedScore = Math.sqrt(deltaTime * 100);
+    lastScore = (MAX_SPEED_POINTS - speedScore) * scoreMultiplicator;
+
+    // Wrong answers will be subtracted from total
+    if (isWrong) {
+        lastScore = -Math.abs(lastScore);
+    }
+
+    totalScore += lastScore;
+    console.log(!isWrong + " answer");
+    console.log("Speed score: " + speedScore);
+    console.log("Multiplier: " + scoreMultiplicator);
+    console.log("Last score:" + lastScore);
+    console.log("Total score: " + totalScore);
+
+    document.getElementById("totalScore").innerHTML = "Gesamtpunktzahl: " + Math.round(totalScore) + " Pkt.";
+    document.getElementById("lastScore").innerHTML = "Punkte (letzte Runde): " + Math.round(lastScore) + " Pkt.";
+    document.getElementById("multiplier").innerHTML = "Score Multiplikator: " + scoreMultiplicator + " x";
+}
+
+/*
+Calculating score multiplicator using binomial coefficient with d = 2. Score multiplicator will increment with streak of 2,4,7,11,16,22,... .
+*/
+function calcMultiplier() {
+    scoreMultiplicator = 1;
+    var sum = 2;
+    while (answerStreak >= sum) {
+        scoreMultiplicator++;
+        sum += scoreMultiplicator;
+    }
+}
+
 
 
 document.onkeydown = onKey;
@@ -148,7 +204,7 @@ function onKey(e) {
             }
             break;
         case 84: // t
-            if (testActive) {
+            if (testActive && experimentActive) {
                 if (!isMammal) {
                     console.log("Wrong! Pressed true when animal was not a mammal...");
                     countErrors++;
@@ -160,7 +216,7 @@ function onKey(e) {
             stopTest();
             break;
         case 70: // f
-            if (testActive) {
+            if (testActive && experimentActive) {
                 if (isMammal) {
                     console.log("Wrong! Pressed false when animal was a mammal...");
                     countErrors++;
