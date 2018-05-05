@@ -147,7 +147,8 @@ function onKey(e) {
                 startExperiment();
             }
             break;
-        case 84: // t
+        case 84: // t           
+            if (!experimentActive) {break;} //avoid input before experiment stated
             if (testActive) {
                 if (!isMammal) {
                     console.log("Wrong! Pressed true when animal was not a mammal...");
@@ -163,7 +164,8 @@ function onKey(e) {
                 document.getElementById("errorMsg").innerHTML = "TOO EARLY!";
             }
             break;
-        case 70: // f
+        case 70: // f           
+            if (!experimentActive) {break;} //avoid input before experiment stated
             if (testActive) {
                 if (isMammal) {
                     console.log("Wrong! Pressed false when animal was a mammal...");
