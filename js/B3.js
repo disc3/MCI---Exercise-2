@@ -6,14 +6,15 @@ var isMammal = false;
 var isWrong = false;
 var countErrors = 0;
 var countTurns = 0;
+
 var animal;
 
-var animals = [["Alpaca", true], ["Braunbaer", true], ["Delfin", true], ["Wal", true],
-["Dachs", true], ["Esel", true], ["Elefant", true], ["Zebra", true], ["Eichhoernchen", true],
+var animals = [["Alpaca", true], ["Braunbär", true], ["Delfin", true], ["Wal", true],
+["Dachs", true], ["Esel", true], ["Elefant", true], ["Zebra", true], ["Eichhörnchen", true],
 ["Flusspferd", true], ["Gorilla", true], ["Koala", true], ["Panda", true], ["Schaf", true], ["Tiger", true],
 ["Clown-Fisch", false], ["Seepferdchen", false], ["Piranha", false], ["Blutegel", false],
 ["Seestern", false], ["Qualle", false], ["Biene", false], ["Schmtterling", false], ["Skorpion", false],
-["Python", false], ["Gecko", false], ["Frosch", false], ["Chamaeleon", false], ["Leguan", false],
+["Python", false], ["Gecko", false], ["Frosch", false], ["Chamäleon", false], ["Leguan", false],
 ["Waran", false],]
 /*
 Start new experiment.
@@ -27,7 +28,7 @@ function startExperiment() {
     document.getElementById("sd").innerHTML = "";
     document.getElementById("errors").innerHTML = "";
     document.getElementById("description").style.display = "none";
-    document.getElementById("instruction").innerHTML = "Druecken Sie 't', wenn es sich beim Tier um ein Saeugetier handelt, sonst 'f'. Druecken Sie 'a' um die Studie abzubrechen.";
+    document.getElementById("instruction").innerHTML = "Drücken Sie 't', wenn es sich beim Tier um ein Säugetier handelt, sonst 'f'. Drücken Sie 'a' um die Studie abzubrechen.";
     startTest();
 }
 
@@ -40,6 +41,8 @@ function startTest() {
     toggleStimulus();
     timeInSeconds = Math.random() * 4 + 2; // 2 - 6s
     isMammal = false;
+    isWrong = false;
+    pressedNothing = false;
     window.setTimeout("showStimulus()", timeInSeconds * 1000);
 }
 
@@ -58,14 +61,12 @@ Sttop current turn.
 */
 function stopTest() {
     console.log("stop test...");
-
-    document.getElementById("errorMsg").innerHTML = "";
     var currTime = new Date().getTime();
     var deltaTime = currTime - lastTimeShapeChanged;
     countTurns++;
     times.push(deltaTime);
     document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
-    document.getElementById("count").innerHTML = "Wiederholungs-Zaehler: " + countTurns;
+    document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
     testActive = false;
     // abort experiment after 30 turns.
     if (countTurns == 30) {
@@ -83,7 +84,6 @@ function stopExperiment() {
     window.setTimeout("showStimulus()", 0);
     testActive = false;
     experimentActive = false;
-    document.getElementById("errorMsg").innerHTML = "";
     toggleStimulus();
     var meanDeltaTime = 0.0;
     for (var i = 0; i < times.length; ++i) {
@@ -97,15 +97,13 @@ function stopExperiment() {
     }
     standardDerivation = Math.round(Math.sqrt(standardDerivation / times.length));
     document.getElementById("time").innerHTML = "";
-    document.getElementById("count").innerHTML = "Stimuli-Zaehler: " + countTurns;
+    document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
     document.getElementById("mean").innerHTML = "Mittelwert: " + meanDeltaTime + "ms";
     document.getElementById("sd").innerHTML = "Standardabweichung: " + standardDerivation + "ms";
     document.getElementById("description").style.display = "block";
-    document.getElementById("instruction").innerHTML = "Druecken Sie die LEERTASTE um die Studie erneut zu starten.";
-    document.getElementById("errors").innerHTML = "Error rate: " + countErrors + " in " + (countTurns + countErrors) + " clicks = " + ((countErrors / (countTurns + countErrors)) * 100).toFixed(2) + "%";
+    document.getElementById("instruction").innerHTML = "Drücken Sie die LEERTASTE um die Studie erneut zu starten.";
+    document.getElementById("errors").innerHTML = "Error rate: " + countErrors + " in " + countTurns + " turns = " + ((countErrors / countTurns) * 100).toFixed(2) + "%";
     times = [];
-    countErrors = 0;
-    countTurns = 0;
 }
 
 /*
@@ -153,31 +151,25 @@ function onKey(e) {
             if (testActive) {
                 if (!isMammal) {
                     console.log("Wrong! Pressed true when animal was not a mammal...");
-                    document.getElementById("errorMsg").innerHTML = "WRONG!";
                     countErrors++;
+                    isWrong = true;
                 } else {
                     console.log("Correct! Pressed true...");
-                    stopTest();
                 }
-            } else {
-                countErrors++;
-                document.getElementById("errorMsg").innerHTML = "TOO EARLY!";
             }
+            stopTest();
             break;
         case 70: // f
             if (testActive) {
                 if (isMammal) {
                     console.log("Wrong! Pressed false when animal was a mammal...");
-                    document.getElementById("errorMsg").innerHTML = "WRONG!";
                     countErrors++;
+                    isWrong = true;
                 } else {
                     console.log("Correct! Pressed true...");
-                    stopTest();
                 }
-            } else {
-                countErrors++;
-                document.getElementById("errorMsg").innerHTML = "TOO EARLY!";
             }
+            stopTest();
             break;
         case 65: // a
             if (experimentActive) {
