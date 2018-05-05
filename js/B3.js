@@ -157,8 +157,8 @@ function onKey(e) {
                     countErrors++;
                 } else {
                     console.log("Correct! Pressed true...");
-                    stopTest();
                 }
+                stopTest();
             } else {
                 countErrors++;
                 document.getElementById("errorMsg").innerHTML = "TOO EARLY!";
@@ -172,8 +172,8 @@ function onKey(e) {
                     countErrors++;
                 } else {
                     console.log("Correct! Pressed true...");
-                    stopTest();
                 }
+                stopTest();
             } else {
                 countErrors++;
                 document.getElementById("errorMsg").innerHTML = "TOO EARLY!";
