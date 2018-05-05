@@ -58,8 +58,6 @@ Sttop current turn.
 */
 function stopTest() {
     console.log("stop test...");
-
-    document.getElementById("errorMsg").innerHTML = "";
     var currTime = new Date().getTime();
     var deltaTime = currTime - lastTimeShapeChanged;
     countTurns++;
@@ -156,6 +154,7 @@ function onKey(e) {
                     document.getElementById("errorMsg").innerHTML = "WRONG!";
                     countErrors++;
                 } else {
+                    document.getElementById("errorMsg").innerHTML = "";
                     console.log("Correct! Pressed true...");
                 }
                 stopTest();
@@ -171,6 +170,7 @@ function onKey(e) {
                     document.getElementById("errorMsg").innerHTML = "WRONG!";
                     countErrors++;
                 } else {
+                    document.getElementById("errorMsg").innerHTML = "";
                     console.log("Correct! Pressed true...");
                 }
                 stopTest();
