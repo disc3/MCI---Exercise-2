@@ -1,4 +1,5 @@
-var experimentActive = false; var testActive = false;
+var experimentActive = false;
+var testActive = false;
 var times = new Array();
 var lastTimeShapeChanged;
 var isMammal = false;
@@ -6,49 +7,73 @@ var isMammal = false;
 var isWrong = false;
 var countErrors = 0;
 var countTurns = 0;
+var animal;
 var highScore = 0;
 var lastScore = 0;
 var totalScore = 0;
 var scoreMultiplicator = 1;
 var answerStreak;
 var deltaTime;
-var animal;
 
-var animals = [["Alpaca", true], ["Braunbär", true], ["Delfin", true], ["Wal", true],
-["Dachs", true], ["Esel", true], ["Elefant", true], ["Zebra", true], ["Eichhörnchen", true],
-["Flusspferd", true], ["Gorilla", true], ["Koala", true], ["Panda", true], ["Schaf", true], ["Tiger", true],
-["Clown-Fisch", false], ["Seepferdchen", false], ["Piranha", false], ["Blutegel", false],
-["Seestern", false], ["Qualle", false], ["Biene", false], ["Schmtterling", false], ["Skorpion", false],
-["Python", false], ["Gecko", false], ["Frosch", false], ["Chamäleon", false], ["Leguan", false],
-["Waran", false],]
+var animals = [
+    ["Alpaca", true],
+    ["Braunbaer", true],
+    ["Delfin", true],
+    ["Wal", true],
+    ["Dachs", true],
+    ["Esel", true],
+    ["Elefant", true],
+    ["Zebra", true],
+    ["Eichhoernchen", true],
+    ["Flusspferd", true],
+    ["Gorilla", true],
+    ["Koala", true],
+    ["Panda", true],
+    ["Schaf", true],
+    ["Tiger", true],
+    ["Clown-Fisch", false],
+    ["Seepferdchen", false],
+    ["Piranha", false],
+    ["Blutegel", false],
+    ["Seestern", false],
+    ["Qualle", false],
+    ["Biene", false],
+    ["Schmtterling", false],
+    ["Skorpion", false],
+    ["Python", false],
+    ["Gecko", false],
+    ["Frosch", false],
+    ["Chamaeleon", false],
+    ["Leguan", false],
+    ["Waran", false],
+]
 /*
 Start new experiment.
 */
 function startExperiment() {
     experimentActive = true;
-    document.getElementById("text").style.display = "none";
+    document.getElementById("text").innerHTML = "";
     document.getElementById("time").innerHTML = "";
     document.getElementById("count").innerHTML = "";
     document.getElementById("mean").innerHTML = "";
     document.getElementById("sd").innerHTML = "";
     document.getElementById("errors").innerHTML = "";
     document.getElementById("description").style.display = "none";
-    document.getElementById("instruction").innerHTML = "Drücken Sie 't', wenn es sich beim Tier um ein Säugetier handelt, sonst 'f'. Drücken Sie 'a' um die Studie abzubrechen.";
-    answerStreak = 0;
+    document.getElementById("instruction").innerHTML = "Druecken Sie 't', wenn es sich beim Tier um ein Saeugetier handelt, sonst 'f'. Druecken Sie 'a' um die Studie abzubrechen.";
     startTest();
+    answerStreak = 0;
 }
 
 /*
 Start next turn. Wait 2 to 6 seconds before next stimulus.
 */
 function startTest() {
-    // clear canvas
+    // clear area where animal information shown
     console.log("starting test. No stimulus shown..");
     toggleStimulus();
     timeInSeconds = Math.random() * 4 + 2; // 2 - 6s
-    isMammal = undefined;
+    isMammal = false;
     isWrong = false;
-    pressedNothing = false;
     window.setTimeout("showStimulus()", timeInSeconds * 1000);
 }
 
@@ -58,7 +83,7 @@ Start new experiment.
 function showStimulus() {
     console.log("showing stimulus...");
     testActive = true;
-    // show shape
+    // show animal
     toggleStimulus();
 }
 
@@ -67,21 +92,24 @@ Sttop current turn.
 */
 function stopTest() {
     console.log("stop test...");
+
+    document.getElementById("errorMsg").innerHTML = "";
     var currTime = new Date().getTime();
     deltaTime = currTime - lastTimeShapeChanged;
     countTurns++;
-    times.push(deltaTime);
     calcScore();
-    testActive = false;
+    times.push(deltaTime);
     document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
-    document.getElementById("count").innerHTML = "Serie: " + answerStreak;
-    toggleStimulus();
+    document.getElementById("count").innerHTML = "Stimuli-Zaehler: " + countTurns;
+    document.getElementById("totalScore").innerHTML = "Gesamtpunktzahl: " + Math.round(totalScore) + " Pkt.";
+    document.getElementById("lastScore").innerHTML = "Punkte (letzte Runde): " + Math.round(lastScore) + " Pkt.";
+    document.getElementById("multiplier").innerHTML = "Score Multiplikator: " + scoreMultiplicator + " x";
+    testActive = false;
     // abort experiment after 30 turns.
     if (countTurns == 30) {
         stopExperiment();
     } else {
-        // offset next turn by 1 second to allow the user to digest the scoring information
-        window.setTimeout("startTest()", 1000);
+        startTest();
     }
 }
 
@@ -93,6 +121,7 @@ function stopExperiment() {
     window.setTimeout("showStimulus()", 0);
     testActive = false;
     experimentActive = false;
+    document.getElementById("errorMsg").innerHTML = "";
     toggleStimulus();
     var meanDeltaTime = 0.0;
     for (var i = 0; i < times.length; ++i) {
@@ -106,13 +135,18 @@ function stopExperiment() {
     }
     standardDerivation = Math.round(Math.sqrt(standardDerivation / times.length));
     document.getElementById("time").innerHTML = "";
-    document.getElementById("count").innerHTML = "Serie: " + answerStreak;
+    document.getElementById("count").innerHTML = "Stimuli-Zaehler: " + countTurns;
     document.getElementById("mean").innerHTML = "Mittelwert: " + meanDeltaTime + "ms";
     document.getElementById("sd").innerHTML = "Standardabweichung: " + standardDerivation + "ms";
     document.getElementById("description").style.display = "block";
-    document.getElementById("instruction").innerHTML = "Drücken Sie die LEERTASTE um die Studie erneut zu starten.";
-    document.getElementById("errors").innerHTML = "Error rate: " + countErrors + " in " + countTurns + " turns = " + ((countErrors / countTurns) * 100).toFixed(2) + "%";
+    document.getElementById("instruction").innerHTML = "Druecken Sie die LEERTASTE um die Studie erneut zu starten.";
+    document.getElementById("totalScore").innerHTML = "Gesamtpunktzahl: " + Math.round(totalScore) + " Pkt.";
+    document.getElementById("lastScore").innerHTML = "Punkte (letzte Runde): " + Math.round(lastScore) + " Pkt.";
+    document.getElementById("multiplier").innerHTML = "Score Multiplikator: " + scoreMultiplicator + " x";
+    document.getElementById("errors").innerHTML = "Fehlerrate: " + countErrors + " in " + (countTurns + countErrors) + " clicks = " + ((countErrors / (countTurns + countErrors)) * 100).toFixed(2) + "%";
     times = [];
+    countErrors = 0;
+    countTurns = 0;
 }
 
 /*
@@ -124,14 +158,17 @@ function toggleStimulus() {
         changeStimulus();
         lastTimeShapeChanged = new Date().getTime();
     }
-    // show if answer was correct
-    else {
+    // clear area
+    else if (countTurns > 0) {
         document.getElementById("text").innerHTML = isWrong ? "falsch" : "korrekt";
+    }
+    else {
+        document.getElementById("text").innerHTML = "";
     }
 }
 
 /*
-Draws stimulus. Can draw a circle and a triangle. Shape determined by chance.
+Change stimulus. Shows name of an animal.
 */
 function changeStimulus() {
     console.log("change stimulus...");
@@ -142,6 +179,9 @@ function changeStimulus() {
     document.getElementById("text").innerHTML = animal;
 }
 
+/*
+Determines the score for one turn. Adds this score to total score
+*/
 function calcScore() {
     var speedScore = 0;
     const MAX_SPEED_POINTS = 700;
@@ -154,11 +194,11 @@ function calcScore() {
         answerStreak = 0;
     }
 
+    console.log("Delta Time is " + deltaTime);
     calcMultiplier();
     // Quick answers will receive bonus points. Speed points turn into negative points after ca. 5 seconds.
     speedScore = Math.sqrt(deltaTime * 100);
     lastScore = (MAX_SPEED_POINTS - speedScore) * scoreMultiplicator;
-
     // Wrong answers will be subtracted from total
     if (isWrong) {
         lastScore = -Math.abs(lastScore);
@@ -170,10 +210,6 @@ function calcScore() {
     console.log("Multiplier: " + scoreMultiplicator);
     console.log("Last score:" + lastScore);
     console.log("Total score: " + totalScore);
-
-    document.getElementById("totalScore").innerHTML = "Gesamtpunktzahl: " + Math.round(totalScore) + " Pkt.";
-    document.getElementById("lastScore").innerHTML = "Punkte (letzte Runde): " + Math.round(lastScore) + " Pkt.";
-    document.getElementById("multiplier").innerHTML = "Score Multiplikator: " + scoreMultiplicator + " x";
 }
 
 /*
@@ -186,11 +222,11 @@ function calcMultiplier() {
         scoreMultiplicator++;
         sum += scoreMultiplicator;
     }
+    console.log("Multiplicator is " + scoreMultiplicator);
 }
 
-
-
 document.onkeydown = onKey;
+
 function onKey(e) {
     if (e == null) {
         e = window.event;
@@ -204,36 +240,44 @@ function onKey(e) {
             }
             break;
         case 84: // t
-            if (testActive && experimentActive) {
+            if (testActive) {
                 if (!isMammal) {
                     console.log("Wrong! Pressed true when animal was not a mammal...");
+                    document.getElementById("errorMsg").innerHTML = "WRONG!";
                     countErrors++;
                     isWrong = true;
+
                 } else {
                     console.log("Correct! Pressed true...");
                 }
+                stopTest();
+            } else {
+                countErrors++;
+                document.getElementById("errorMsg").innerHTML = "TOO EARLY!";
             }
-            stopTest();
             break;
         case 70: // f
-            if (testActive && experimentActive) {
+            if (testActive) {
                 if (isMammal) {
                     console.log("Wrong! Pressed false when animal was a mammal...");
+                    document.getElementById("errorMsg").innerHTML = "WRONG!";
                     countErrors++;
                     isWrong = true;
                 } else {
                     console.log("Correct! Pressed true...");
                 }
+                stopTest();
+            } else {
+                countErrors++;
+                document.getElementById("errorMsg").innerHTML = "TOO EARLY!";
             }
-            stopTest();
             break;
         case 65: // a
             if (experimentActive) {
                 stopExperiment();
             }
             break;
-        case 66:
-        // b
-        // here you can extend... alert("pressed the b key"); break;
+        default:
+            break;
     }
 }

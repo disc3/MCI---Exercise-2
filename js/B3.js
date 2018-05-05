@@ -1,20 +1,44 @@
-var experimentActive = false; var testActive = false;
+var experimentActive = false;
+var testActive = false;
 var times = new Array();
 var lastTimeShapeChanged;
 var isMammal = false;
-// pressed space a key even though he should not have
-var isWrong = false;
 var countErrors = 0;
 var countTurns = 0;
 var animal;
 
-var animals = [["Alpaca", true], ["Braunbaer", true], ["Delfin", true], ["Wal", true],
-["Dachs", true], ["Esel", true], ["Elefant", true], ["Zebra", true], ["Eichhoernchen", true],
-["Flusspferd", true], ["Gorilla", true], ["Koala", true], ["Panda", true], ["Schaf", true], ["Tiger", true],
-["Clown-Fisch", false], ["Seepferdchen", false], ["Piranha", false], ["Blutegel", false],
-["Seestern", false], ["Qualle", false], ["Biene", false], ["Schmtterling", false], ["Skorpion", false],
-["Python", false], ["Gecko", false], ["Frosch", false], ["Chamaeleon", false], ["Leguan", false],
-["Waran", false],]
+var animals = [
+    ["Alpaca", true],
+    ["Braunbaer", true],
+    ["Delfin", true],
+    ["Wal", true],
+    ["Dachs", true],
+    ["Esel", true],
+    ["Elefant", true],
+    ["Zebra", true],
+    ["Eichhoernchen", true],
+    ["Flusspferd", true],
+    ["Gorilla", true],
+    ["Koala", true],
+    ["Panda", true],
+    ["Schaf", true],
+    ["Tiger", true],
+    ["Clown-Fisch", false],
+    ["Seepferdchen", false],
+    ["Piranha", false],
+    ["Blutegel", false],
+    ["Seestern", false],
+    ["Qualle", false],
+    ["Biene", false],
+    ["Schmtterling", false],
+    ["Skorpion", false],
+    ["Python", false],
+    ["Gecko", false],
+    ["Frosch", false],
+    ["Chamaeleon", false],
+    ["Leguan", false],
+    ["Waran", false],
+]
 /*
 Start new experiment.
 */
@@ -65,7 +89,7 @@ function stopTest() {
     countTurns++;
     times.push(deltaTime);
     document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
-    document.getElementById("count").innerHTML = "Wiederholungs-Zaehler: " + countTurns;
+    document.getElementById("count").innerHTML = "Stimuli-Zaehler: " + countTurns;
     testActive = false;
     // abort experiment after 30 turns.
     if (countTurns == 30) {
@@ -137,6 +161,7 @@ function changeStimulus() {
 
 
 document.onkeydown = onKey;
+
 function onKey(e) {
     if (e == null) {
         e = window.event;
@@ -185,7 +210,7 @@ function onKey(e) {
             }
             break;
         case 66:
-        // b
-        // here you can extend... alert("pressed the b key"); break;
+            // b
+            // here you can extend... alert("pressed the b key"); break;
     }
 }

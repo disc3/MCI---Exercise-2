@@ -4,14 +4,14 @@ var lastTimeShapeChanged;
 var isTriangle = false;
 // pressed space key even though he should not have
 var pressedWrong = false;
-// true when user pressed nothing when shown a triangle
-var pressedNothing = false;
 var timer = 0;
 var countErrors = 0;
 var countTurns = 0;
 // canvas to draw shapes
 var canvas = document.getElementById("shape");
 var ctx = canvas.getContext("2d");
+const MAX_TIME_STIMULUS_SHOWN = 4000;
+
 /*
 Start new experiment.
 */
@@ -38,7 +38,6 @@ function startTest() {
     timeInSeconds = Math.random() * 4 + 2; // 2 - 6s
     isTriangle = false;
     pressedWrong = false;
-    pressedNothing = false;
     window.setTimeout("showStimulus()", timeInSeconds * 1000);
 }
 
@@ -63,7 +62,7 @@ function stopTest() {
     var deltaTime = currTime - lastTimeShapeChanged;
     countTurns++;
     // don't push times where nothing was clicked within 3 seconds of being shown stimulus.
-    if (isTriangle || pressedWrong) {
+    if ((isTriangle || pressedWrong) && deltaTime <= MAX_TIME_STIMULUS_SHOWN) {
         times.push(deltaTime);
         document.getElementById("time").innerHTML = "Letzte Zeit: " + deltaTime + "ms";
     }
@@ -175,13 +174,12 @@ function checkInterval() {
     // calc time difference since being shown stimulus.
     var cTime = new Date().getTime();
     var dTime = cTime - lastTimeShapeChanged;
-    if (dTime > 3000) {
+    if (dTime > MAX_TIME_STIMULUS_SHOWN) {
         if (isTriangle) {
             console.log("Did not press anything, even though triangle was shown.");
-            pressedNothing = true;
             countErrors++;
         } else {
-            console.log("Did not press anything for 3 seconds.");
+            console.log("Did not press anything for 4 seconds.");
         }
         stopInterval();
     }
