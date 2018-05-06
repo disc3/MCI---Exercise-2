@@ -7,6 +7,8 @@ var isWrong = false;
 var countErrors = 0;
 var countTurns = 0;
 var animal;
+var userName;
+var userAge;
 
 var animals = [["Alpaca", true], ["Braunbaer", true], ["Delfin", true], ["Wal", true],
 ["Dachs", true], ["Esel", true], ["Elefant", true], ["Zebra", true], ["Eichhoernchen", true],
@@ -133,6 +135,24 @@ function changeStimulus() {
     document.getElementById("text").innerHTML = animal;
 }
 
+function checkInputandStart(){
+    // called when Submit button is pressed
+
+    console.log(userAge,userName);
+    userName = document.getElementById('nameInput').value;
+    userAge = document.getElementById('ageInput').value;
+    if ((userAge.trim() == '') || (userName.trim() == '')){
+        document.getElementById("errorMsg").innerHTML = "Bitte vollstaendig und korrekt ausfuellen!";
+    } else {
+        document.getElementById('submitButton').style.visibility = 'hidden';
+        document.getElementById('nameInput').style.visibility = 'hidden';
+        document.getElementById('ageInput').style.visibility = 'hidden';
+        document.getElementById('ageDescript').style.visibility = 'hidden';
+        document.getElementById('nameDescript').style.visibility = 'hidden';
+        document.getElementById("errorMsg").innerHTML = "";
+        startExperiment();
+    }
+}
 
 document.onkeydown = onKey;
 function onKey(e) {
@@ -142,7 +162,7 @@ function onKey(e) {
     switch (e.which || e.charCode || e.keyCode) {
         case 32:
             // space
-            if (!experimentActive) {
+            if ((!experimentActive)&&(userAge !== undefined)) {
                 console.log("pressed space the first time...");
                 startExperiment();
             }
