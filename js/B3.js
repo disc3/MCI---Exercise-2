@@ -103,6 +103,12 @@ function stopExperiment() {
     document.getElementById("description").style.display = "block";
     document.getElementById("instruction").innerHTML = "Druecken Sie die LEERTASTE um die Studie erneut zu starten.";
     document.getElementById("errors").innerHTML = "Error rate: " + countErrors + " in " + (countTurns + countErrors) + " clicks = " + ((countErrors / (countTurns + countErrors)) * 100).toFixed(2) + "%";
+
+    times.push("Name: " + userName)
+    times.push("Alter: " + userAge)
+    times.push("Durchschnittszeit: " + meanDeltaTime)
+    times.push("Standardabweichung: " + standardDerivation)
+    csvDownload();
     times = [];
     countErrors = 0;
     countTurns = 0;
@@ -152,6 +158,41 @@ function checkInputandStart(){
         document.getElementById("errorMsg").innerHTML = "";
         startExperiment();
     }
+}
+
+function csvDownload(){
+    // Building the CSV from the Data two-dimensional array
+    // Each column is separated by ";" and new line "\n" for next row
+    var csvContent = '';
+    console.log(times);
+    times.forEach(function(infoArray, index) {
+      csvContent += index < times.length ? infoArray + '\n' : infoArray;
+    });
+    
+    // The download function takes a CSV string, the filename and mimeType as parameters
+    // Scroll/look down at the bottom of this snippet to see how download is called
+    var download = function(content, fileName, mimeType) {
+      var a = document.createElement('a');
+      mimeType = mimeType || 'application/octet-stream';
+    
+      if (navigator.msSaveBlob) { // IE10
+        navigator.msSaveBlob(new Blob([content], {
+          type: mimeType
+        }), fileName);
+      } else if (URL && 'download' in a) { //html5 A[download]
+        a.href = URL.createObjectURL(new Blob([content], {
+          type: mimeType
+        }));
+        a.setAttribute('download', fileName);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+      }
+    }
+    
+    download(csvContent, 'TestErgebnis.csv', 'text/csv;encoding:utf-8');
 }
 
 document.onkeydown = onKey;
