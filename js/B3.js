@@ -151,6 +151,7 @@ function checkInputandStart(){
         document.getElementById("errorMsg").innerHTML = "Bitte vollstaendig und korrekt ausfuellen!";
     } else {
         document.getElementById('submitButton').style.visibility = 'hidden';
+        document.getElementById('submitButton').disabled = true; 
         document.getElementById('nameInput').style.visibility = 'hidden';
         document.getElementById('ageInput').style.visibility = 'hidden';
         document.getElementById('ageDescript').style.visibility = 'hidden';
@@ -192,7 +193,7 @@ function csvDownload(){
       }
     }
     
-    download(csvContent, 'TestErgebnis.csv', 'text/csv;encoding:utf-8');
+    download(csvContent, userName + 'Experiment3.csv', 'text/csv;encoding:utf-8');
 }
 
 document.onkeydown = onKey;
