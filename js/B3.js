@@ -6,7 +6,7 @@ var isMammal = false;
 var countErrors = 0;
 var countTurns = 0;
 var animal;
-var userName;
+var userName='';
 var userAge;
 
 var animals = [
@@ -166,22 +166,23 @@ function changeStimulus() {
 }
 
 function checkInputandStart(){
-    // called when Submit button is pressed
-
-    console.log(userAge,userName);
-    userName = document.getElementById('nameInput').value;
-    userAge = document.getElementById('ageInput').value;
-    if ((userAge.trim() == '') || (userName.trim() == '')){
-        document.getElementById("errorMsg").innerHTML = "Bitte vollstaendig und korrekt ausfuellen!";
-    } else {
-        document.getElementById('submitButton').style.visibility = 'hidden';
-        document.getElementById('submitButton').disabled = true; 
-        document.getElementById('nameInput').style.visibility = 'hidden';
-        document.getElementById('ageInput').style.visibility = 'hidden';
-        document.getElementById('ageDescript').style.visibility = 'hidden';
-        document.getElementById('nameDescript').style.visibility = 'hidden';
-        document.getElementById("errorMsg").innerHTML = "";
-        startExperiment();
+        // called when Submit button is pressed
+        userName = document.getElementById('nameInput').value;
+        userAge = document.getElementById('ageInput').value;
+    if ((!experimentActive)&&(userName.trim() != '')) {
+        console.log(userAge,userName);
+        if ((userAge.trim() == '') || (userName.trim() == '')){
+            document.getElementById("errorMsg").innerHTML = "Bitte vollstaendig und korrekt ausfuellen!";
+            userName='';
+        } else {
+            document.getElementById('submitButton').style.visibility = 'hidden';
+            document.getElementById('nameInput').style.visibility = 'hidden';
+            document.getElementById('ageInput').style.visibility = 'hidden';
+            document.getElementById('ageDescript').style.visibility = 'hidden';
+            document.getElementById('nameDescript').style.visibility = 'hidden';
+            document.getElementById("errorMsg").innerHTML = "";
+            startExperiment();
+        }
     }
 }
 
@@ -229,7 +230,7 @@ function onKey(e) {
     switch (e.which || e.charCode || e.keyCode) {
         case 32:
             // space
-            if ((!experimentActive)&&(userAge !== undefined)) {
+            if ((!experimentActive)&&(userName.trim() != '')) {
                 console.log("pressed space the first time...");
                 startExperiment();
             }
