@@ -1,146 +1,29 @@
 <!DOCTYPE html>
 
 <html>
-   <head>
-      <title>Human Capabilities - Reaction test</title>
-   </head>
-   <body>
-      <script type="text/javascript">
-         var experimentActive = false; var testActive = false;
-         var timesImage = new Array();
-         var timesAudio = new Array();
-         var lastTime;
-         var isImage;
-         
-         
-         function startExperiment() {
-         	experimentActive = true; 
-         	document.getElementById("time").innerHTML = "";
-          	document.getElementById("count").innerHTML = ""; 
-          	document.getElementById("meanAudio").innerHTML = "";
-          	document.getElementById("meanImage").innerHTML = "";
-          	document.getElementById("sdAudio").innerHTML = "";
-          	document.getElementById("sdImage").innerHTML = "";
-          	document.getElementById("instruction").innerHTML = "Press SPACE when a Picture or Sound appears! \n Press 'a' for results!";
-         	startTest();
-         }
-         
-         function startTest() {
-         	lastTime = new Date().getTime();
-         	document.getElementById("audiofile").pause();
-         	document.getElementById("audiofile").currentTime = 0;
-         	document.getElementById("image").style.display = "none";
-         	isImage = Math.random() >= 0.5;
-         	var timeInSeconds = Math.random() * 4 + 2; // 2 - 6s
-         	window.setTimeout("showStimulus()", timeInSeconds * 1000);
-         }
-         
-         function showStimulus() { 
-         	testActive = true;
-             if (isImage == false) {
-                 document.getElementById("audiofile").play();
-             } else {
-                 document.getElementById("image").style.display = "block";
-             }
-         	lastTime = new Date().getTime();
-         }
-         
-         function stopTest() {
-         	var currTime = new Date().getTime();
-         	var deltaTime = currTime - lastTime;
-         	if (isImage == false){
-         	    timesAudio.push(deltaTime);
-            } else {
-         	    timesImage.push(deltaTime);
-            }
-         	document.getElementById("time").innerHTML = deltaTime + "ms"; 
-         	testActive = false;
-         	startTest();
-         }
-         
-         function stopExperiment() {
-             clearTimeout(0);
-         	console.log(timesAudio);
-         	console.log(timesImage);
-         	// document.getElementById("image").style.display ="none";
-         	// document.getElementById("audiofile").pause();
-         	testActive = false;
-         	var meanDeltaTimeAudio = 0.0;
-         	for (var i = 0; i < timesAudio.length; ++i) {
-                meanDeltaTimeAudio += timesAudio[i];
-         	}
-         	meanDeltaTimeAudio = Math.round(meanDeltaTimeAudio / timesAudio.length);
-         	var standardDerivationAudio = 0.0;
-         	for (var i = 0; i < timesAudio.length; ++i) {
-                var diff = (timesAudio[i] - meanDeltaTimeAudio);
-                standardDerivationAudio += diff * diff;
-         	}
-         	standardDerivationAudio =  Math.round(Math.sqrt(standardDerivationAudio / timesImage.length));
-         	var meanDeltaTimeImage = 0.0;
-         	for (var i = 0; i < timesImage.length; ++i) {
-                 meanDeltaTimeImage += timesImage[i];
-             }
-             meanDeltaTimeImage = Math.round(meanDeltaTimeImage / timesImage.length);
-             var standardDerivationImage = 0.0;
-             for (var i = 0; i < timesImage.length; ++i) {
-                 var diff = (timesImage[i] - meanDeltaTimeImage);
-                 standardDerivationImage += diff * diff;
-             }
-             standardDerivationImage =  Math.round(Math.sqrt(standardDerivationImage / timesImage.length));
-
-            var count = timesImage.length + timesAudio.length;
-         	document.getElementById("count").innerHTML = "Count: " + count;
-         	document.getElementById("meanImage").innerHTML = "Mean of Image: " + meanDeltaTimeImage + "ms";
-         	document.getElementById("meanAudio").innerHTML = "Mean of Audio: " + meanDeltaTimeAudio + "ms";
-         	document.getElementById("sdImage").innerHTML = "SD of Image: " + standardDerivationImage + "ms";
-         	document.getElementById("sdAudio").innerHTML = "SD of Audio: " + standardDerivationAudio + "ms";
-         	document.getElementById("instruction").innerHTML = "Press SPACE to start!";
-
-
-         	timesAudio = [];
-         	timesImage = [];
-         	experimentActive = false; 
-         }
-
-         document.onkeydown = onKey;
-         function onKey(e) { if (e == null) {
-                 e = window.event;
-             }
-         	switch (e.which || e.charCode || e.keyCode) { 
-         		case 32:
-         		// space
-         		if (!experimentActive) {
-         			startExperiment(); } 
-         			else {
-         				if (testActive) {
-         					stopTest();
-         				} 
-         			}
-         		break;
-         		case 65: // a
-         		if (experimentActive) {
-         			stopExperiment(); 
-         		}
-         		break;
-         		case 66:
-         		// b
-         		// here you can extend... alert("pressed the b key"); break;
-         	} 
-         }
-      </script>
-      <h1>
-         <p id="text">User Study</p>
-      </h1>
-      <h1 id="instruction">Press SPACE to start!</h1>
-      <img id="image" style="display:none" src="Hirsch.jpg">
-      <audio id="audiofile" preload="auto">
-      <source src="HIRSCH.mp3" />
-      </audio>
-      <p id="time"></p>
-      <p id="count"></p>
-      <p id="meanImage"></p>
-      <p id="meanAudio"></p>
-      <p id="sdAudio"></p>
-      <p id="sdImage"></p>
-   </body>
+    <head>
+        <title>Menschliche Faehigkeiten - Reaktionsexperiment</title>
+        <script defer src="js/B1.js"></script>
+    </head>
+        <body>
+            <h1>
+                <p id="text">Reaktionszeit-Experiment</p>
+            </h1>
+            <h3 id="description">
+                <br> 1. Test <br>
+                Anleitung: Es wird zufaellig entweder eine Audiodatei auf ihrem Computer abgespielt oder ein Bild auf dem Bildschirm angezeigt. <br>
+                In beiden Faellen druecken Sie bitte so schnell wie moeglich die Leertaste<br>
+            </h3>
+            <h1 id="instruction">Druecken Sie die Leertaste um zu beginnen!</h1>
+            <img id="image" style="display:none" src="Hirsch.jpg">
+            <audio id="audiofile" preload="auto">
+                <source src="HIRSCH.mp3" />
+            </audio>
+            <p id="time"></p>
+            <p id="count"></p>
+            <p id="meanImage"></p>
+            <p id="meanAudio"></p>
+            <p id="sdAudio"></p>
+            <p id="sdImage"></p>
+    </body>
 </html>

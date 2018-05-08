@@ -10,6 +10,8 @@ var countTurns = 0;
 // canvas to draw shapes
 var canvas = document.getElementById("shape");
 var ctx = canvas.getContext("2d");
+var userName;
+var userAge;
 const MAX_TIME_STIMULUS_SHOWN = 4000;
 
 /*
@@ -104,6 +106,12 @@ function stopExperiment() {
     document.getElementById("description").style.display = "block";
     document.getElementById("instruction").innerHTML = "Drücken Sie die LEERTASTE um die Studie erneut zu starten.";
     document.getElementById("errors").innerHTML = "Error rate: " + countErrors + " in " + countTurns + " turns = " + ((countErrors / countTurns) * 100).toFixed(2) + "%";
+    
+    times.push("Name: " + userName) 
+    times.push("Alter: " + userAge) 
+    times.push("Durchschnittszeit: " + meanDeltaTime) 
+    times.push("Standardabweichung: " + standardDerivation) 
+    csvDownload(); 
     times = [];
 }
 
@@ -150,6 +158,60 @@ function changeStimulus() {
     ctx.fill();
 }
 
+function checkInputandStart(){
+    // called when Submit button is pressed
+
+    console.log(userAge,userName);
+    userName = document.getElementById('nameInput').value;
+    userAge = document.getElementById('ageInput').value;
+    if ((userAge.trim() == '') || (userName.trim() == '')){
+        document.getElementById("errorMsg").innerHTML = "Bitte vollstaendig und korrekt ausfuellen!";
+    } else {
+        document.getElementById('submitButton').style.visibility = 'hidden';
+        document.getElementById('submitButton').disabled = true; 
+        document.getElementById('nameInput').style.visibility = 'hidden';
+        document.getElementById('ageInput').style.visibility = 'hidden';
+        document.getElementById('ageDescript').style.visibility = 'hidden';
+        document.getElementById('nameDescript').style.visibility = 'hidden';
+        document.getElementById('errorMsg').style.visibility = 'hidden';
+        startExperiment();
+    }
+}
+
+function csvDownload(){
+    // Building the CSV from the Data two-dimensional array
+    // Each column is separated by ";" and new line "\n" for next row
+    var csvContent = '';
+    console.log(times);
+    times.forEach(function(infoArray, index) {
+      csvContent += index < times.length ? infoArray + '\n' : infoArray;
+    });
+    
+    // The download function takes a CSV string, the filename and mimeType as parameters
+    // Scroll/look down at the bottom of this snippet to see how download is called
+    var download = function(content, fileName, mimeType) {
+      var a = document.createElement('a');
+      mimeType = mimeType || 'application/octet-stream';
+    
+      if (navigator.msSaveBlob) { // IE10
+        navigator.msSaveBlob(new Blob([content], {
+          type: mimeType
+        }), fileName);
+      } else if (URL && 'download' in a) { //html5 A[download]
+        a.href = URL.createObjectURL(new Blob([content], {
+          type: mimeType
+        }));
+        a.setAttribute('download', fileName);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+      }
+    }
+    
+    download(csvContent, userName + 'Experiment2.csv', 'text/csv;encoding:utf-8');
+}
 /*
 Function that checks how long stimulus has been shown.
 */
@@ -164,6 +226,8 @@ function stopInterval() {
     clearInterval(timer);
     timer = 0;
     if (experimentActive) {
+
+        console.log("stopTest is called");
         stopTest();
     }
 }
@@ -193,11 +257,10 @@ function onKey(e) {
     switch (e.which || e.charCode || e.keyCode) {
         case 32:
             // space
-            if (!experimentActive) {
-                console.log("pressed space the first time...");
+            if ((!experimentActive)&&(userAge !== undefined)) {
+                console.log("pressed space the after first experiment run...");
                 startExperiment();
-            }
-            else {
+            } else {
                 if (testActive) {
                     if (!isTriangle) {
                         console.log("pressed space when circle was shown...");
