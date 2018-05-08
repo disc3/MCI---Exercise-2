@@ -69,7 +69,7 @@ function stopTest() {
     document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
     testActive = false;
     // abort experiment after 30 turns.
-    if (countTurns == 30) {
+    if (timses.length == 30) {
         stopExperiment();
     } else {
         startTest();
