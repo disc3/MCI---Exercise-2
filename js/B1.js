@@ -235,7 +235,7 @@ function onKey(e) { if (e == null) {
             // space
             if ((!experimentActive)&&(userName.trim() != '')) {
                 startExperiment(); }
-            else {
+            else if (experimentActive){
                 if (testActive) {
                     stopTest();
                 } else {
