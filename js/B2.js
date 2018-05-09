@@ -47,6 +47,8 @@ function startTest() {
 Start new experiment.
 */
 function showStimulus() {
+
+    document.getElementById("errorMsg").innerHTML = "";
     console.log("showing stimulus...");
     testActive = true;
     // show shape
@@ -71,7 +73,7 @@ function stopTest() {
     document.getElementById("count").innerHTML = "Wiederholungs-Zähler: " + countTurns;
     testActive = false;
     // abort experiment after 30 turns.
-    if (timses.length == 30) {
+    if (times.length == 30) {
         stopExperiment();
     } else {
         startTest();
@@ -244,6 +246,7 @@ function checkInterval() {
     if (dTime > MAX_TIME_STIMULUS_SHOWN) {
         if (isTriangle) {
             console.log("Did not press anything, even though triangle was shown.");
+            document.getElementById("errorMsg").innerHTML = "too late";
             countErrors++;
         } else {
             console.log("Did not press anything for 4 seconds.");
@@ -267,6 +270,7 @@ function onKey(e) {
                 if (testActive) {
                     if (!isTriangle) {
                         console.log("pressed space when circle was shown...");
+                        document.getElementById("errorMsg").innerHTML = "wrong";
                         countErrors++;
                         pressedWrong = true;
                     } else {
