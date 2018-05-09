@@ -128,10 +128,11 @@ function stopExperiment() {
     document.getElementById("instruction").innerHTML = "Druecken Sie die LEERTASTE um die Studie erneut zu starten.";
     document.getElementById("errors").innerHTML = "Error rate: " + countErrors + " in " + (countTurns + countErrors) + " clicks = " + ((countErrors / (countTurns + countErrors)) * 100).toFixed(2) + "%";
 
-    times.push("Name: " + userName)
-    times.push("Alter: " + userAge)
-    times.push("Durchschnittszeit: " + meanDeltaTime)
-    times.push("Standardabweichung: " + standardDerivation)
+    times.push("Name: " + userName);
+    times.push("Alter: " + userAge);
+    times.push("Durchschnittszeit: " + meanDeltaTime);
+    times.push("Standardabweichung: " + standardDerivation);
+	times.push("Fehleranzahl: " + countErrors);
     csvDownload();
     times = [];
     countErrors = 0;

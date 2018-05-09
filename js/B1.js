@@ -4,6 +4,7 @@ var timesAudio = new Array();
 var times = new Array();
 var lastTime;
 var isImage;
+var countErrors = 0;
 var counter = 0;
 var userName='';
 var userAge;
@@ -19,6 +20,7 @@ function startExperiment() {
     document.getElementById("meanImage").innerHTML = "";
     document.getElementById("sdAudio").innerHTML = "";
     document.getElementById("sdImage").innerHTML = "";
+	document.getElementById("errorRate").innerHTML = "";
     document.getElementById("description").style.display = "none";
     document.getElementById("instruction").innerHTML = "Druecken Sie die Leertaste wenn ein Ton oder ein Bild erscheint \n Druecken Sie 'a' um die Studie abzubrechen";
     startTest();
@@ -40,6 +42,7 @@ function startTest() {
  */
 function showStimulus() {
     console.log('showing stimulus...')
+    document.getElementById('errorMsg').innerHTML = "";
     testActive = true;
     toggleStimulus();
 }
@@ -106,20 +109,23 @@ function stopExperiment() {
     document.getElementById("sdImage").innerHTML = "SD of Image: " + standardDerivationImage + "ms";
     document.getElementById("sdAudio").innerHTML = "SD of Audio: " + standardDerivationAudio + "ms";
     document.getElementById("instruction").innerHTML = "Leertaste druecken um neu zu starten";
+    document.getElementById("errorRate").innerHTML = "Fehlerrate: " + ((countErrors /(count+countErrors))*100) + "%";
 
-    timesAudio.push("Audiotimes") 
-    timesAudio.push("Name: " + userName) 
-    timesAudio.push("Alter: " + userAge) 
-    timesAudio.push("Durchschnittszeit: " + meanDeltaTimeAudio) 
-    timesAudio.push("Standardabweichung: " + standardDerivationAudio)
+    timesAudio.push("Audiotimes") ;
+    timesAudio.push("Name: " + userName); 
+    timesAudio.push("Alter: " + userAge);
+    timesAudio.push("Durchschnittszeit: " + meanDeltaTimeAudio);
+    timesAudio.push("Standardabweichung: " + standardDerivationAudio);
 
-    timesAudio.push("Imagetimes") 
-    timesImage.push("Name: " + userName) 
-    timesImage.push("Alter: " + userAge) 
-    timesImage.push("Durchschnittszeit: " + meanDeltaTimeImage) 
-    timesImage.push("Standardabweichung: " + standardDerivationImage)
+    timesAudio.push("Imagetimes");
+    timesImage.push("Name: " + userName);
+    timesImage.push("Alter: " + userAge);
+    timesImage.push("Durchschnittszeit: " + meanDeltaTimeImage);
+    timesImage.push("Standardabweichung: " + standardDerivationImage);
 
-    times = timesAudio.concat(timesImage)
+    times = timesAudio.concat(timesImage);
+	times.push("Fehleranzahl: " + countErrors);
+	countErrors=0;
     csvDownload();
     timesAudio = [];
     timesImage = [];
@@ -179,7 +185,7 @@ function checkInputandStart(){
             document.getElementById('ageInput').style.visibility = 'hidden';
             document.getElementById('ageDescript').style.visibility = 'hidden';
             document.getElementById('nameDescript').style.visibility = 'hidden';
-            document.getElementById('errorMsg').style.visibility = 'hidden';
+            document.getElementById('errorMsg').innerHTML = "";
             startExperiment();
         }
     }
@@ -232,7 +238,10 @@ function onKey(e) { if (e == null) {
             else {
                 if (testActive) {
                     stopTest();
-                }
+                } else {
+					document.getElementById('errorMsg').innerHTML = "TOO EARLY";
+					countErrors++
+				}
             }
             break;
         case 65: // a
