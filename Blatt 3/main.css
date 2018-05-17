@@ -1,0 +1,49 @@
+@import url(https_//fonts.googleapis.com/css?family=Anonymous+Pro);
+
+html{
+  min-height: 100%;
+  overflow: hidden;
+}
+
+body{
+  height: calc(100vh - 8em);
+  padding: 4em;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: 'Anonymous-Pro', monospace;
+  background-color:rgb(170, 170, 170); 
+}
+
+.line{
+  position: relative;
+  top:50%;
+  width: 16em;
+  margin: 0 auto;
+  border-right: 2px solid rgba(255, 255, 255, 0.75);
+font-size: 500%;
+text-align: center;
+white-space: nowrap;
+overflow: hidden;
+transform: translateY(-50%);
+}
+
+.anim-typewriter{
+  /* Adjust both numbers in steps to the length of the strings of the html */
+  animation: typewriter 4s steps(40) 1s 1 normal both,
+  blinkTextCursor 500ms steps(40) normal both;
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  } to {
+    width: 16em;
+  }
+}
+
+@keyframes blinkTextCursor {
+  from {
+    border-right-color: rgba(255, 255, 255, alpha)0.75;
+  } to {
+    border-right-color: transparent;
+  }
+}
