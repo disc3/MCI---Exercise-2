@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Menschliche Faehigkeiten - Reaktionsexperiment</title>
+	<script defer src="B3.js"></script>
+</head>
+
+<body>
+	<h1>
+		<p id="text">Reaktionszeit-Experiment</p>
+	</h1>
+	<h3 id="description">Sie werden drei unterschiedliche Tests durchfuehren. Jeder Test wird 30x durchgefuehrt.
+		<br> 3. Test: <br>
+		Anleitung: Am Bildschirm werden die Namen von Tieren angezeigt. <br>
+		<ul>
+			<li style="color:red">Das Tier ist <i>kein</i> Saeugetier. Druecken Sie ' f '.</li>
+			<li style="color:red">Das Tier ist ein Saeugetier: Druecken Sie ' t '</li>
+			<li>Wird die falsche Taste gedrueckt, zaehlt das als Fehler.</li>
+		</ul>
+		
+	</h3>
+	<h1 id="instruction">Geben Sie ihren Namen und ihre Alter an und druecken Sie dann Submit um das Experiment zu starten!</h1>
+	<h1 id="errorMsg" style="color:red"></h1>
+
+	<p id="nameDescript">Bitte hier Namen angeben</p>
+	<input type="text" id="nameInput" />
+	<p id="ageDescript">Bitte hier Alter angeben</p>
+	<input type="number" id="ageInput" />
+	<p></p>
+	<button type="button" onclick="checkInputandStart()" id="submitButton">Submit</button>
+	<p>
+		<p id="time"></p>
+		<p id="count"></p>
+		<p id="mean"></p>
+		<p id="sd"></p>
+		<p id="errors"></p>
+
+</body>
+
+</html>

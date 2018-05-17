@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Menschliche Faehigkeiten - Reaktionsexperiment</title>
+	<script defer src="B4.js"></script>
+</head>
+
+<body>
+	<h1 height:1em>
+		<p id="text">Reaktionszeit-Experiment</p>
+	</h1>
+	<h3 id="description">Sie werden drei unterschiedliche Tests durchfuehren. Jeder Test wird 30x durchgefuehrt.
+		<br> 3. Test: <br>
+		Anleitung: Am Bildschirm werden die Namen von Tieren angezeigt. <br>
+		<ul>
+			<li style="color:red">Das Tier ist <i>kein</i> Saeugetier. Druecken Sie ' f '.</li>
+			<li style="color:red">Das Tier ist ein Saeugetier: Druecken Sie ' t '</li>
+			<li>Wird die falsche Taste gedrueckt, zaehlt das als Fehler.</li>
+		</ul>
+		<p>Scoring-System:</p>
+		<ul>
+			<li>Sie erhalten Pluspunkte fuer richtige Antworten und Maluspunkte fuer falsche Antworten.</li>
+			<li>Es gibt einen Speed-Bonus. Bonus-Punkte fuer schnelle Antworten und Maluspunkte fuer zu langsame Antworten.</li>
+			<li>Wenn Sie mehrere richtige Antworten in Folge abgeben, erhalten sie einen hoeheren Punktemultiplikator. Der Multiplikator wird erhoeht nach 2, 4, 7, 11, ... Antworten./li>
+		</ul>
+		
+	</h3>
+	<h1 id="errorMsg" style="color:red"></h1>
+	<h1 id="instruction">Druecken Sie die LEERTASTE um das Experiment zu starten!</h1>
+	<p>
+		<p id="time"></p>
+		<p id="count"></p>
+		<p id="mean"></p>
+		<p id="sd"></p>
+		<p id="errors"></p>
+		<p></p>
+		<p id="totalScore"></p>
+		<p id="lastScore"></p>
+		<p id="multiplier"></p>
+
+</body>
+
+</html>
