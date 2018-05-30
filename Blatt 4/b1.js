@@ -1,10 +1,11 @@
 var horizontal;
 var vertical;
-
+function setup() {
+    ScreenOrientationManager = new ScreenOrientationManager();
+    ScreenOrientationManager.lockOrientation('landscape-primary');
+}
 function draw() {
-    deviceOrientation = 'LANDSCAPE';
-    createCanvas(windowWidth, windowHeight);
-    background(0);
-    fill(255,0,0);
-    ellipse(50, 50, 80, 80);
+    background(100);
+    fill(255, 0, 0);
+    line(0, height / 2, width, height / 2);
 }
