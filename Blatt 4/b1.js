@@ -31,24 +31,38 @@ var rectSizes = [{
     vert: 50,
     count: 0
 }];
+var touchedShape = false;
+
+
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+    background(100);
+    calcRandomPosition();
+    fill(255, 0, 0);
+    rect(nextPos.x, nextPos.y, nextSize.hor, nextSize.vert);
+}
 
 function draw() {
-        createCanvas(windowWidth, windowHeight);
-        background(100);
-        fill(255, 0, 0);
-        line(0, height / 2, width, height / 2);
+    createCanvas(windowWidth, windowHeight);
+    background(100);
+    fill(255, 0, 0);
+    line(0, height / 2, width, height / 2);
+    // check if mouse clicked on shape. If yes, reshape.
+    if (touchedShape == true) {
         calcRandomPosition();
-
-        // draw rectangle to screen
-        fill(255, 0, 0);
-        rect(nextPos.x, nextPos.y, nextSize.hor, nextSize.vert);
+    }
+    // reset boolean to "not clicked"
+    touchedShape = false;
+    
+    // draw rectangle to screen
+    fill(255, 0, 0);
+    rect(nextPos.x, nextPos.y, nextSize.hor, nextSize.vert);
 }
 
 function calcRandomPosition() {
     const MAX_COUNT = 10;
     const MIN_DISTANCE = 30;
     let rand;
-
     // select random size. Check max amount while selecting
     console.log("Array size: " + rectSizes.length - 1);
 
@@ -72,3 +86,8 @@ function calcRandomPosition() {
     lastPos.y = nextPos.y;
 }
 
+function mousePressed() {
+    if ((mouseX >= nextPos.x) && (mouseX <= (nextPos.x + nextSize.hor)) && (mouseY >= nextPos.y) && (mouseY <= (nextPos.y + nextSize.vert))) {
+        touchedShape = true;
+    }
+}
