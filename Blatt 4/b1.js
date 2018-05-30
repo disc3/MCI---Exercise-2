@@ -53,7 +53,7 @@ function draw() {
     }
     // reset boolean to "not clicked"
     touchedShape = false;
-    
+
     // draw rectangle to screen
     fill(255, 0, 0);
     rect(nextPos.x, nextPos.y, nextSize.hor, nextSize.vert);
@@ -62,26 +62,26 @@ function draw() {
 function calcRandomPosition() {
     const MAX_COUNT = 10;
     const MIN_DISTANCE = 30;
-    let rand;
+    let randomIndex;
     // select random size. Check max amount while selecting
     console.log("Array size: " + rectSizes.length - 1);
 
     do {
-        rand = int(random(rectSizes.length));
-        console.log("Rand index: " + rand);
-    } while (rectSizes[rand].count == MAX_COUNT);
+        randomIndex = int(random(rectSizes.length));
+        console.log("Rand index: " + randomIndex);
+    } while (rectSizes[randomIndex].count == MAX_COUNT);
 
-    nextSize = rectSizes[rand];
+    nextSize = rectSizes[randomIndex];
     // calc random position that complies with distance premise.
     do {
-        nextPos.x = int((random(width) + rectSizes[rand].hor) % width);
+        nextPos.x = int((random(width) + rectSizes[randomIndex].hor) % width);
         console.log("Next x position: " + nextPos.x);
     } while (int(dist(lastPos.x, lastPos.y, nextPos.x, lastPos.y)) < MIN_DISTANCE);
     // align at middle of height
-    nextPos.y = height / 2 - rectSizes[rand].vert / 2;
+    nextPos.y = height / 2 - rectSizes[randomIndex].vert / 2;
 
 
-    rectSizes[rand].count++;
+    rectSizes[randomIndex].count++;
     lastPos.x = nextPos.x;
     lastPos.y = nextPos.y;
 }
