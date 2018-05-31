@@ -34,23 +34,34 @@ var rectSizes = [{
 var touchedShape = false;
 var turnCounter = 1;
 
+/*
+    These constants were determined by analyzing web pages for a desktop solution of 1920x1080.
+    The max height has been reduced because the task bar is always visible (size for default task bar in Windows 10).
+*/
+const MAX_DESKTOP_WIDTH = 1920;
+const MAX_DESKTOP_HEIGHT = 974;
+
 
 function setup() {
-    createCanvas(windowWidth - 50, windowHeight - 50);
+    createCanvas(min(windowWidth, MAX_DESKTOP_WIDTH), min(windowHeight, MAX_DESKTOP_HEIGHT));
     background(100);
     calcRandomPosition();
     fill(255, 0, 0);
     rect(nextPos.x, nextPos.y, nextSize.hor, nextSize.vert);
+    screen.lockOrientation('landscape');
 }
 
 function draw() {
-    createCanvas(windowWidth, windowHeight);
+    createCanvas(min(windowWidth, MAX_DESKTOP_WIDTH), min(windowHeight, MAX_DESKTOP_HEIGHT));
     background(100);
     fill(255, 0, 0);
     line(0, height / 2, width, height / 2);
     // check if mouse clicked on shape. If yes, reshape.
-    if (touchedShape == true) {
+    if (touchedShape == true && turnCounter <=50) {
         calcRandomPosition();
+    } else if(turnCounter > 50){
+        alert("You finished the exercise!");
+        remove();
     }
     // reset boolean to "not clicked"
     touchedShape = false;
@@ -66,6 +77,10 @@ function calcRandomPosition() {
     let randomIndex;
     // select random size. Check max amount while selecting
     console.log("Array size: " + rectSizes.length - 1);
+    
+    if (turnCounter > 50){
+        alert("You finished the exercise.");
+    }
 
     do {
         randomIndex = int(random(rectSizes.length));
@@ -90,14 +105,6 @@ function calcRandomPosition() {
 function mousePressed() {
     if ((mouseX >= nextPos.x) && (mouseX <= (nextPos.x + nextSize.hor)) && (mouseY >= nextPos.y) && (mouseY <= (nextPos.y + nextSize.vert))) {
         touchedShape = true;
+        turnCounter++;
     }
 }
-/*
-function touchStarted() {
-    if ((mouseX >= nextPos.x) && (mouseX <= (nextPos.x + nextSize.hor)) && (mouseY >= nextPos.y) && (mouseY <= (nextPos.y + nextSize.vert))) {
-        touchedShape = true;
-    }
-
-    return false;
-}
-*/
