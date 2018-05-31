@@ -37,6 +37,7 @@ var timer;
 var distance;
 var firstTurn;
 var inputDevice;
+var isLandscapeOriented;
 /*
     These constants were determined by analyzing web pages for a desktop solution of 1920x1080.
     The max height has been reduced because the task bar is always visible (size for default task bar in Windows 10).
@@ -48,11 +49,12 @@ const MAX_DESKTOP_HEIGHT = 974;
 function setup() {
     // detect input device
     if(window.matchMedia('handheld').matches){
-        device = 'Handheld';
+        device = 'Smartphone';
+        isLandscapeOriented = !window.matchMedia('orientation: landscape').matches;
+        Screen.lockOrientation('landscape');
     } else {
         device = 'Desktop / Laptop';
     }
-    screen.orientation.lock('landscape');
     // for the first distance. Saves the position of the cursor when the page gets loaded.
     lastPos.x = mouseX;
     lastPos.y = mouseY;
