@@ -48,7 +48,7 @@ function setup() {
     calcRandomPosition();
     fill(255, 0, 0);
     rect(nextPos.x, nextPos.y, nextSize.hor, nextSize.vert);
-    screen.lockOrientation('landscape-primary');
+    screen.orientation.lock('landscape');
 }
 
 function draw() {
