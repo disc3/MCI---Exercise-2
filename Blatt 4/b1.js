@@ -32,32 +32,36 @@ var rectSizes = [{
     count: 0
 }];
 var touchedShape = false;
-var turnCounter = 1;
+var turnCounter = 0;
 var timer;
 var distance;
 var firstTurn;
-var inputDevice;
+var device;
 var isLandscapeOriented;
+var experimentData = [];
+var turnData;
+var errors;
 /*
     These constants were determined by analyzing web pages for a desktop solution of 1920x1080.
     The max height has been reduced because the task bar is always visible (size for default task bar in Windows 10).
 */
 const MAX_DESKTOP_WIDTH = 1920;
 const MAX_DESKTOP_HEIGHT = 974;
-
+const EXPERIMENT_DIMENSION = '1D';
+const TIMESTAMP = new Date().toUTCString();
 
 function setup() {
     // detect input device
-    if(window.matchMedia('handheld').matches){
+    if (window.matchMedia('handheld').matches) {
         device = 'Smartphone';
         isLandscapeOriented = !window.matchMedia('orientation: landscape').matches;
-        Screen.lockOrientation('landscape');
     } else {
         device = 'Desktop / Laptop';
+        // for the first distance. Saves the position of the cursor when the page gets loaded.
+        lastPos.x = mouseX;
+        lastPos.y = mouseY;
     }
-    // for the first distance. Saves the position of the cursor when the page gets loaded.
-    lastPos.x = mouseX;
-    lastPos.y = mouseY;
+
     firstTurn = true;
     distance = 0;
 }
@@ -67,14 +71,18 @@ function draw() {
     background(100);
     fill(255, 0, 0);
     line(0, height / 2, width, height / 2);
-    
+
     // Re-calc position whenever the shape's been clicked. Also calc if experiment runs for first time (i.e. first turn)
-    if ((touchedShape == true && turnCounter <=50) || firstTurn) {
+    if ((touchedShape == true && turnCounter <= 50) || firstTurn) {
         firstTurn = false;
         calcRandomPosition();
+        turnCounter++;
         timer = performance.now();
-    } else if(turnCounter > 50){
+        errors = 0;
+
+    } else if (turnCounter > 50) {
         alert("You finished the exercise!");
+        saveJSON(experimentData, TIMESTAMP + '.json');
         remove();
     }
     // reset boolean to "not clicked"
@@ -91,7 +99,7 @@ function calcRandomPosition() {
     let randomIndex;
 
     // protective clause to avoid infinite loop (because all counters are already maxed out)
-    if (turnCounter > 50){
+    if (turnCounter > 50) {
         alert("You finished the exercise.");
         return;
     }
@@ -109,21 +117,36 @@ function calcRandomPosition() {
     // align at middle of height
     nextPos.y = height / 2 - nextSize.vert / 2;
     rectSizes[randomIndex].count++;
-    if (turnCounter != 1){
-        distance = dist(lastPos.x, lastPos.y, nextPos.x, nextPos.y);
-    }
-    
+    // calc distance from last shape to the center of the current shape
+    distance = dist(lastPos.x, lastPos.y, int(nextPos.x + nextSize.hor / 2), int(nextPos.y + nextSize.vert / 2));
+
     console.log("Distance between shapes: " + distance);
-    
+
     lastPos.x = nextPos.x;
     lastPos.y = nextPos.y;
 }
 
 function mousePressed() {
+    // clicked inside shape
     if ((mouseX >= nextPos.x) && (mouseX <= (nextPos.x + nextSize.hor)) && (mouseY >= nextPos.y) && (mouseY <= (nextPos.y + nextSize.vert))) {
         touchedShape = true;
-        turnCounter++;
         timer = performance.now() - timer;
         console.log("It took " + timer + " ms to click the shape.");
+
+        turnData = {
+            W: nextSize.hor,
+            A: distance,
+            time: timer,
+            errCount: errors,
+            inputDevice: device,
+            dimensions: EXPERIMENT_DIMENSION,
+            turn: turnCounter
+        };
+        experimentData.push(turnData);
+        console.log("Last data tuple was:");
+        console.log(turnData);
+        // clicked outside of shape
+    } else {
+        errors++;
     }
 }
