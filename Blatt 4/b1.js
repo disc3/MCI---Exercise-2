@@ -79,13 +79,14 @@ function draw() {
         turnCounter++;
         timer = performance.now();
         errors = 0;
+        createTable();
 
     } else if (turnCounter > 50) {
-        alert("You finished the exercise!");
+        alert('You finished the exercise!');
         saveJSON(experimentData, TIMESTAMP + '.json');
         remove();
     }
-    // reset boolean to "not clicked"
+    // reset boolean to 'not clicked'
     touchedShape = false;
 
     // draw rectangle to screen
@@ -100,7 +101,7 @@ function calcRandomPosition() {
 
     // protective clause to avoid infinite loop (because all counters are already maxed out)
     if (turnCounter > 50) {
-        alert("You finished the exercise.");
+        alert('You finished the exercise.');
         return;
     }
 
@@ -120,7 +121,7 @@ function calcRandomPosition() {
     // calc distance from last shape to the center of the current shape
     distance = dist(lastPos.x, lastPos.y, int(nextPos.x + nextSize.hor / 2), int(nextPos.y + nextSize.vert / 2));
 
-    console.log("Distance between shapes: " + distance);
+    console.log('Distance between shapes: ' + distance);
 
     lastPos.x = nextPos.x;
     lastPos.y = nextPos.y;
@@ -131,7 +132,7 @@ function mousePressed() {
     if ((mouseX >= nextPos.x) && (mouseX <= (nextPos.x + nextSize.hor)) && (mouseY >= nextPos.y) && (mouseY <= (nextPos.y + nextSize.vert))) {
         touchedShape = true;
         timer = performance.now() - timer;
-        console.log("It took " + timer + " ms to click the shape.");
+        console.log('It took ' + timer + ' ms to click the shape.');
 
         turnData = {
             W: nextSize.hor,
@@ -143,10 +144,26 @@ function mousePressed() {
             turn: turnCounter
         };
         experimentData.push(turnData);
-        console.log("Last data tuple was:");
+        console.log('Last data tuple was:');
         console.log(turnData);
         // clicked outside of shape
     } else {
         errors++;
     }
+}
+
+function createTable(){
+    let table = new p5.Table(new p5.TableRow());
+    table.addColumn('W');
+    table.addColumn('A');
+    table.addColumn('Reaktionszeit');
+    table.addColumn('Fehlerzahl');
+    table.addColumn('Eingabegerät');
+    table.addColumn('Experiments-Dimensionen');
+    table.addColumn('Wiederholung');
+    experimentData.forEach(function(element) {
+        let tr = new p5.tableRow([element.W, element.A, element.time, element.errCount, element.inputDevice, element.dimensions, element.turn]);
+        table.addRow(tr);
+      });
+    saveTable(table, TIMESTAMP);
 }
