@@ -102,8 +102,7 @@ function calcRandomPosition() {
     let randomIndex;
 
     // protective clause to avoid infinite loop (because all counters are already maxed out)
-    if (turnCounter > MAX_TURN_COUNT) {
-        alert('You finished the exercise.');
+    if (turnCounter >= MAX_TURN_COUNT) {
         return;
     }
 
