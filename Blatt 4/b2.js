@@ -47,7 +47,7 @@ const MAX_TURN_COUNT = 50;
 
 function setup() {
     // detect input device
-    if (window.matchMedia('handheld').matches) {
+    if (window.matchMedia("only screen and (max-width: 900px)")) {
         device = 'Smartphone';
         lastPos.x = int(windowWidth / 2);
         lastPos.y = int(windowHeight / 2);
