@@ -49,7 +49,7 @@ const MAX_DESKTOP_WIDTH = 1920;
 const MAX_DESKTOP_HEIGHT = 974;
 const EXPERIMENT_DIMENSION = '1D';
 const TIMESTAMP = new Date().toUTCString();
-const MAX_TURN_COUNT = 5;
+const MAX_TURN_COUNT = 50;
 
 function setup() {
     // detect input device
