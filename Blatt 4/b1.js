@@ -37,7 +37,6 @@ var timer;
 var distance;
 var firstTurn;
 var device;
-var isLandscapeOriented;
 var experimentData = [];
 var turnData;
 var errors;
@@ -55,7 +54,8 @@ function setup() {
     // detect input device
     if (window.matchMedia('handheld').matches) {
         device = 'Smartphone';
-        isLandscapeOriented = !window.matchMedia('orientation: landscape').matches;
+        lastPos.x = int(windowWidth / 2);
+        lastPos.y = int(windowHeight / 2);
     } else {
         device = 'Desktop / Laptop';
         // for the first distance. Saves the position of the cursor when the page gets loaded.
@@ -85,8 +85,7 @@ function draw() {
 
     } else if (turnCounter > MAX_TURN_COUNT) {
         alert('You finished the exercise!');
-        // saveJSON(experimentData, TIMESTAMP + '.json');
-        createTable();
+        createTableForDownload();
         remove();
     }
     // reset boolean to 'not clicked'
@@ -155,7 +154,8 @@ function mousePressed() {
     }
 }
 
-function createTable() {
+/* Create a csv table for download and later evaluation */
+function createTableForDownload() {
     let table = new p5.Table(new p5.TableRow());
     table.addColumn('W');
     table.addColumn('A');
