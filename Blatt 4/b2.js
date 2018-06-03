@@ -12,24 +12,19 @@ var nextSize = {
 };
 var rectSizes = [{
     hor: 20,
-    vert: 10,
-    count: 0
+    vert: 10
 }, {
     hor: 40,
-    vert: 20,
-    count: 0
+    vert: 20
 }, {
     hor: 60,
-    vert: 30,
-    count: 0
+    vert: 30
 }, {
     hor: 80,
-    vert: 40,
-    count: 0
+    vert: 40
 }, {
     hor: 100,
-    vert: 50,
-    count: 0
+    vert: 50
 }];
 var touchedShape = false;
 var turnCounter = 0;
@@ -46,7 +41,7 @@ var errors;
 */
 const MAX_DESKTOP_WIDTH = 1920;
 const MAX_DESKTOP_HEIGHT = 974;
-const EXPERIMENT_DIMENSION = '1D';
+const EXPERIMENT_DIMENSION = '2D';
 const TIMESTAMP = new Date().toUTCString();
 const MAX_TURN_COUNT = 50;
 
@@ -56,6 +51,7 @@ function setup() {
         device = 'Smartphone';
         lastPos.x = int(windowWidth / 2);
         lastPos.y = int(windowHeight / 2);
+        document.fullscreenElement.requestFullscreen();
     } else {
         device = 'Desktop / Laptop';
         // for the first distance. Saves the position of the cursor when the page gets loaded.
@@ -71,7 +67,6 @@ function draw() {
     createCanvas(min(windowWidth, MAX_DESKTOP_WIDTH), min(windowHeight, MAX_DESKTOP_HEIGHT));
     background(100);
     fill(255, 0, 0);
-    line(0, height / 2, width, height / 2);
 
     // Re-calc position whenever the shape's been clicked. Also calc if experiment runs for first time (i.e. first turn)
     if ((touchedShape == true && turnCounter <= MAX_TURN_COUNT) || firstTurn) {
@@ -107,19 +102,15 @@ function calcRandomPosition() {
         return;
     }
 
-    // select random size. Check max amount while selecting
-    do {
         randomIndex = int(random(rectSizes.length));
-    } while (rectSizes[randomIndex].count == MAX_COUNT);
 
     nextSize = rectSizes[randomIndex];
     // calc random position while guaranteeing that the entire shape is visible on the screen.
     do {
         nextPos.x = int(random(width - nextSize.hor) % width);
+        nextPos.y = int(random(height - nextSize.vert) % height);
     } while (int(dist(lastPos.x, lastPos.y, nextPos.x, lastPos.y)) < MIN_DISTANCE);
-    // align at middle of height
-    nextPos.y = height / 2 - nextSize.vert / 2;
-    rectSizes[randomIndex].count++;
+
     // calc distance from last shape to the center of the current shape
     distance = dist(lastPos.x, lastPos.y, int(nextPos.x + nextSize.hor / 2), int(nextPos.y + nextSize.vert / 2));
 
