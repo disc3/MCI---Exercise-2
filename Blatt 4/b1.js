@@ -49,6 +49,7 @@ const MAX_DESKTOP_WIDTH = 1920;
 const MAX_DESKTOP_HEIGHT = 974;
 const EXPERIMENT_DIMENSION = '1D';
 const TIMESTAMP = new Date().toUTCString();
+const MAX_TURN_COUNT = 5;
 
 function setup() {
     // detect input device
@@ -73,17 +74,19 @@ function draw() {
     line(0, height / 2, width, height / 2);
 
     // Re-calc position whenever the shape's been clicked. Also calc if experiment runs for first time (i.e. first turn)
-    if ((touchedShape == true && turnCounter <= 50) || firstTurn) {
+    if ((touchedShape == true && turnCounter <= MAX_TURN_COUNT) || firstTurn) {
         firstTurn = false;
         calcRandomPosition();
         turnCounter++;
+        console.log("Turn " + turnCounter);
+
         timer = performance.now();
         errors = 0;
-        createTable();
 
-    } else if (turnCounter > 50) {
+    } else if (turnCounter > MAX_TURN_COUNT) {
         alert('You finished the exercise!');
-        saveJSON(experimentData, TIMESTAMP + '.json');
+        // saveJSON(experimentData, TIMESTAMP + '.json');
+        createTable();
         remove();
     }
     // reset boolean to 'not clicked'
@@ -100,7 +103,7 @@ function calcRandomPosition() {
     let randomIndex;
 
     // protective clause to avoid infinite loop (because all counters are already maxed out)
-    if (turnCounter > 50) {
+    if (turnCounter > MAX_TURN_COUNT) {
         alert('You finished the exercise.');
         return;
     }
@@ -152,7 +155,7 @@ function mousePressed() {
     }
 }
 
-function createTable(){
+function createTable() {
     let table = new p5.Table(new p5.TableRow());
     table.addColumn('W');
     table.addColumn('A');
@@ -161,9 +164,10 @@ function createTable(){
     table.addColumn('Eingabegerät');
     table.addColumn('Experiments-Dimensionen');
     table.addColumn('Wiederholung');
-    experimentData.forEach(function(element) {
-        let tr = new p5.tableRow([element.W, element.A, element.time, element.errCount, element.inputDevice, element.dimensions, element.turn]);
+    experimentData.forEach(function (element) {
+        let tr = new p5.TableRow(String(element.W) + "," + String(element.A) + "," + String(element.time) + "," + String(element.errCount) + "," + String(element.inputDevice) + 
+            "," + String(element.dimensions) + "," + String(element.turn), ',');
         table.addRow(tr);
-      });
-    saveTable(table, TIMESTAMP);
+    });
+    saveTable(table, TIMESTAMP + '.csv', 'csv');
 }
