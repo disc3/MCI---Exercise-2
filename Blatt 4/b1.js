@@ -164,8 +164,8 @@ function createTableForDownload() {
     table.addColumn('Experiments-Dimensionen');
     table.addColumn('Wiederholung');
     experimentData.forEach(function (element) {
-        let tr = new p5.TableRow(String(element.W) + "," + String(element.A) + "," + String(element.time) + "," + String(element.errCount) + "," + String(element.inputDevice) + 
-            "," + String(element.dimensions) + "," + String(element.turn), ',');
+        let tr = new p5.TableRow(String(element.W) + ';' + String(element.A) + ';' + String(element.time) + ';' + String(element.errCount) + ';' + String(element.inputDevice) + 
+            ';' + String(element.dimensions) + ';' + String(element.turn), ';');
         table.addRow(tr);
     });
     saveTable(table, TIMESTAMP + '.csv', 'csv');
