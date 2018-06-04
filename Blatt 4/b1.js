@@ -133,8 +133,7 @@ function calcRandomPosition() {
     lastPos.x = nextPos.x;
     lastPos.y = nextPos.y;
 }
-
-function mousePressed() {
+function touchClickEvent(){
     // clicked inside shape
     if ((mouseX >= nextPos.x) && (mouseX <= (nextPos.x + nextSize.hor)) && (mouseY >= nextPos.y) && (mouseY <= (nextPos.y + nextSize.vert))) {
         touchedShape = true;
@@ -155,9 +154,22 @@ function mousePressed() {
         console.log(turnData);
         // clicked outside of shape
     } else {
+        console.log("error count up");
         errors++;
     }
 }
+
+function mousePressed() {
+    if(device == 'Desktop / Laptop'){
+        console.log("mouse pressed")
+    touchClickEvent();
+    }
+    return false;
+}
+window.addEventListener('touchend', function onSmartphone() {
+    console.log("hello from fkt")
+    touchClickEvent();
+  },false);
 
 /* Create a csv table for download and later evaluation */
 function createTableForDownload() {
