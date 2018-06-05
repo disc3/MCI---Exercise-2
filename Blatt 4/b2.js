@@ -47,7 +47,12 @@ const MAX_TURN_COUNT = 50;
 
 function setup() {
     // detect input device
-    if (window.matchMedia("only screen and (max-width: 900px)")) {
+    if (navigator.userAgent.match(/Android/i)
+    || navigator.userAgent.match(/webOS/i)
+    || navigator.userAgent.match(/iPhone/i)
+    || navigator.userAgent.match(/iPad/i)
+    || navigator.userAgent.match(/iPod/i)
+    || navigator.userAgent.match(/BlackBerry/i)) {
         device = 'Smartphone';
         lastPos.x = int(windowWidth / 2);
         lastPos.y = int(windowHeight / 2);
@@ -119,7 +124,7 @@ function calcRandomPosition() {
     lastPos.y = nextPos.y;
 }
 
-function mousePressed() {
+function touchClickEvent() {
     // clicked inside shape
     if ((mouseX >= nextPos.x) && (mouseX <= (nextPos.x + nextSize.hor)) && (mouseY >= nextPos.y) && (mouseY <= (nextPos.y + nextSize.vert))) {
         touchedShape = true;
@@ -143,6 +148,18 @@ function mousePressed() {
         errors++;
     }
 }
+
+function mousePressed() {
+    if(device == 'Desktop / Laptop'){
+        console.log("mouse pressed")
+    touchClickEvent();
+    }
+    return false;
+}
+window.addEventListener('touchend', function onSmartphone() {
+    console.log("hello from fkt")
+    touchClickEvent();
+  },false);
 
 /* Create a csv table for download and later evaluation */
 function createTableForDownload() {
