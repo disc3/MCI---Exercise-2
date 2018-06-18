@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Fahrplanauskunft</title>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-danger mt-5 mb-5">Mein Reiseservice</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <p class="mb-5"><strong>Reiseauskunft</strong></p>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <input type="text" id="startLocation" class="form-control" placeholder="von Bahnhof / Haltestelle / Adresse" list="haltestellen">
+                </div>
+                <div class="col-6">
+                    <input type="text"id="destination" class="form-control" placeholder="nach Bahnhof / Haltestelle / Adresse" list="haltestellen" >
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-4">
+                    <input type="date" id="startDate" value="2018-06-11" class="form-control" tabindex="-1">
+                </div>
+                <div class="col-2">
+                    <input type="time" id="startTime" value="10:00" class="form-control" tabindex="-1">
+                </div>
+                <div class="col-6" id="departure">
+                    <div class="form-check form-check-inline">
+                        <input type="radio" name="wann" value="ab" class="form-check-input" id="ab" checked tabindex="-1">
+                        <label for="ab" class="form-check-label">Ab</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" name="wann" value="an" class="form-check-input" id="an" tabindex="-1">
+                        <label for="an" class="form-check-label">An</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" name="verbindung" class="form-check-input" id="verbindung" disabled tabindex="-1">
+                        <label for=verbindung class="form-check-label">Schnelle Verbindungen bevorzugen</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" id="nahverkehr" name="nahverkehr" class="form-check-input" id="nahverkehr" tabindex="-1">
+                        <label for=nahverkehr class="form-check-label">Nur Nahverkehr</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-4">
+                    <select class="form-control" disabled tabindex="-1">
+                        <option>1 Reisender</option>
+                        <option>2 Reisende</option>
+                        <option>3 Reisende</option>
+                        <option>4 Reisende</option>
+                        <option>5 Reisende</option>
+                        <option>mehr als 5</option>
+                    </select>
+                </div>
+                <div class="col-2">
+                    <select class="form-control" disabled tabindex="-1">
+                        <option>Erwachsener</option>
+                        <option>Kinder 6-14 J.</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <select class="form-control" disabled tabindex="-1">
+                        <option>Ohne BahnCard</option>
+                        <option>BahnCard 25, 2. Klasse</option>
+                        <option>BahnCard 25, 1. Klasse</option>
+                        <option>BahnCard 50, 2. Klasse</option>
+                        <option>BahnCard 50, 1. Klasse</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-check form-check-inline">
+                        <input type="radio" name="klasse" value="1" class="form-check-input" id="klasse-1" disabled tabindex="-1">
+                        <label for="klasse-1" class="form-check-label">1. Klasse</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" name="klasse" value="2" class="form-check-input" id="klasse-2" checked disabled tabindex="-1">
+                        <label for="klasse-2" class="form-check-label">2. Klasse</label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-7 text-right"></div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-block btn-secondary" disabled tabindex="-1">Weitere Optionen</button>
+                </div>
+                <div class="col-3">
+                    <button type="submit" class="btn btn-block btn-danger" tabindex="-1" onclick="search()">Suchen</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <datalist id="haltestellen">
+        <option value="Stuttgart Hauptbahnhof" />
+        <option value="Tübingen Hauptbahnhof" />
+        <option value="München Hauptbahnhof" />
+        <option value="Stuttgart Schwabstraße"/>
+        <option value="Frankfurt Hauptbahnhof"/>
+        <option value="Münchner Freiheit"/>
+        <option value="Stuttgart Universität"/>
+        <option value="Stuttgart Schlossplatz"/>
+        <option value="Tübingen West"/>
+        <option value="Tübingen Tropenklinik"/>
+    </datalist>
+
+</div>
+<script>
+    function search()	{
+        var startLocation = document.getElementById("startLocation").value;
+        var destination = document.getElementById("destination").value;
+        var date = new Date(document.getElementById("startDate").value);
+        var startDate = date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+        var startTime = document.getElementById("startTime").value;
+        var regionalTrains = document.getElementById("nahverkehr").checked;
+        var depArr = document.getElementsByName('wann');
+        var departure = "ab";
+        for (var i = 0, length = depArr.length; i < length; i++) {
+            if (depArr[i].checked && depArr[i].value == "an") {
+                departure = "an";
+            }
+        }
+
+        //Generate url for the search
+        var website = "https://reiseauskunft.bahn.de/bin/query.exe/dn?S="+startLocation+"&Z="+destination+"&date="+startDate+"&time="+startTime;
+
+        //Use only regional trains
+        if (regionalTrains) {
+            website = website + "&productFilter=0001111111";
+        }
+
+        //Arrival or departure
+        if (departure == "an") {
+            website = website + "&timeSel=arrive";
+        }
+        else {
+            website = website + "&timeSel=depart";
+        }
+
+        //Automatic search
+        website = website + "&start=1";
+
+        //Forward to bahn.de
+        window.open(website, '_self');
+
+
+    }
+</script>
+
+</body>
+</html>
