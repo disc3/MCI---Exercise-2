@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title></title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script
+    type="text/javascript"
+    src="/js/lib/dummy.js"
+    
+  ></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+      <script type="text/javascript" src="https://unpkg.com/survey-knockout@1.0.29/survey.ko.js"></script>
+      <link rel="stylesheet" type="text/css" href="https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+  <style type="text/css">
+    .btn-green {
+  background-color: #1ab394;
+  color: #fff;
+  border-radius: 3px; }
+  .btn-green:hover, .btn-green:focus {
+    background-color: #18a689;
+    color: #fff; }
+
+.bar-green {
+  background-color: #1ab394;
+  color: #fff;
+  padding-left: 10px; }
+
+.panel-footer {
+  text-align: right;
+  background-color: #fff; }
+
+#result {
+    position:absolute;
+    left: 20px;
+}
+
+  </style>
+  <!-- TODO: Missing CoffeeScript 2 -->
+
+  <script type="text/javascript">
+
+
+    window.onload=function(){
+      
+var json = { title: "Happy Plants Wearable-Application Fragebogen", showProgressBar: "top", pages: [
+    {questions: [
+        { type: "matrix", name: "Quality&Data", title: "Bitte geben Sie an inwiefern Sie den folgenden Aussagen zustimmen",
+            columns: [{ value: "garnicht", text: "garnicht" },
+                { value: "weniger", text: "weniger" },
+                { value: "neutral", text: "neutral" },
+                { value: "mehr", text: "mehr" },
+                { value: "völlig", text: "völlig" }],
+            rows: [{ value: "Das App Design ist übersichtlich?", text: "Das App Design ist übersichtlich!" },
+                { value: "Hauptmenü und Subfenster sind gut strukturiert?", text: "Hauptmenü und Subfenster sind gut strukturiert!" },
+                { value: "Ich habe mich gleich in der App zurechtgefunden?", text: "Ich habe mich gleich in der App zurechtgefunden!" },
+                { value: "Das Design finde ich ansprechend?", text: "Das Design finde ich ansprechend!" },
+                { value: "Die angezeigten Daten finde ich informativ", text: "Die angezeigten Daten finde ich informativ!" }]},
+        { type: "rating", name: "satisfaction", title: "Wie zufrieden sind Sie mit der App?",
+            mininumRateDescription: "nicht zufrieden", maximumRateDescription: "sehr zufrieden" },
+        { type: "rating", name: "recommend friends", visibleIf: "{satisfaction} > 3",
+            title: "Wie wahrscheinlich ist es, dass Sie diese App an Freunde oder Kollegen weiterempfehlen?",
+            mininumRateDescription: "sehr unwahrscheinlich", maximumRateDescription: "sehr wahrscheinlich" },
+        { type: "comment", name: "suggestions", title:"Was würde diese App für sie attraktiver machen?", }
+    ]},
+    {questions: [
+        { type: "radiogroup", name: "price to competitors",
+            title: "Verglichen mit anderen Wearable Apps finde ich diese App:",
+            choices: ["sehr unnütz","unnütz", "neutral", "nützlich", "sehr nützlich"]},
+        { type: "radiogroup", name: "price", title: "Wie sollte der Preis der App gestaltet sein?",
+            choices: ["kostenlos",
+                "weniger als 1 Euro",
+                "weniger als 2 Euro","weniger als 5 Euro", "mehr als 5 Euro"]},
+        { type: "multipletext", name: "pricelimit", title: "Was ist der.. ",
+            items: [{ name: "mostamount", title: "höchste Betrag den Sie für diese oder eine vergleichbare App bezahlen würden" },
+                { name: "leastamount", title: "niedrigste Betrag den Sie für diese oder eine vergleichbare App angemessen finden" }]}
+    ]},
+    { questions: [
+        { type: "text", name: "recommendations",
+            title: 'Danke, dass Sie an unserer Studie teilgenommen haben. Falls Sie noch Anregungen zu unserer Studie oder zu unserer App haben, tragen sie diese bitte in das untere Feld ein. Drücken Sie "Complete", um die Studie abzuschließen'}
+    ]}
+]};
+
+Survey.defaultBootstrapCss.navigationButton = "btn btn-green";
+Survey.defaultBootstrapCss.progressBar = "bar-green";
+Survey.Survey.cssType = "bootstrap";
+
+var survey = new Survey.Model(json);
+
+survey.onComplete.add(function(result) {
+    document.querySelector('#result').innerHTML = "Bitte schicken Sie die CSV an Ihren Studienleiter!";
+    var saveData = (function () {
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    return function (data, fileName) {
+        var json = JSON.stringify(data),
+            blob = new Blob([json], {type: "octet/stream"}),
+            url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+}());
+
+var data = JSON.stringify(result.data)
+    fileName = "HappyPlantSurvey.csv";
+
+saveData(data, fileName);
+});
+
+survey.render("surveyElement");
+
+    }
+
+</script>
+
+</head>
+<body>
+  <div id="surveyElement"></div>
+
+<div id="result"></div>
+  
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "pmkzr5gh"
+      }], "*")
+    }
+  </script>
+</body>
+</html>
