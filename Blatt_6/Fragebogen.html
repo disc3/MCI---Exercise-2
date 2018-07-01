@@ -9,12 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <script
-    type="text/javascript"
-    src="/js/lib/dummy.js"
-    
-  ></script>
-
     <link rel="stylesheet" type="text/css" href="/css/result-light.css">
 
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
@@ -47,19 +41,22 @@
   <!-- TODO: Missing CoffeeScript 2 -->
 
   <script type="text/javascript">
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+}
 
 
     window.onload=function(){
       
 var json = { title: "Happy Plants Wearable-Application Fragebogen", showProgressBar: "top", pages: [
     {questions: [
-        { type: "matrix", name: "Quality&Data", title: "Bitte geben Sie an inwiefern Sie den folgenden Aussagen zustimmen",
+        { type: "matrix", name: "QualityData", title: "Bitte geben Sie an inwiefern Sie den folgenden Aussagen zustimmen",
             columns: [{ value: "garnicht", text: "garnicht" },
                 { value: "weniger", text: "weniger" },
                 { value: "neutral", text: "neutral" },
                 { value: "mehr", text: "mehr" },
                 { value: "völlig", text: "völlig" }],
-            rows: [{ value: "Das App Design ist übersichtlich?", text: "Das App Design ist übersichtlich!" },
+            rows: [{ value: "Das App Design ist übersichtlich?", text: "Das App Design ist übersichtlich!"},
                 { value: "Hauptmenü und Subfenster sind gut strukturiert?", text: "Hauptmenü und Subfenster sind gut strukturiert!" },
                 { value: "Ich habe mich gleich in der App zurechtgefunden?", text: "Ich habe mich gleich in der App zurechtgefunden!" },
                 { value: "Das Design finde ich ansprechend?", text: "Das Design finde ich ansprechend!" },
@@ -112,9 +109,17 @@ survey.onComplete.add(function(result) {
     };
 }());
 
-var data = JSON.stringify(result.data)
-    fileName = "HappyPlantSurvey.csv";
-
+var data = JSON.stringify(result.data);
+fileName = "HappyPlantSurvey.csv";
+data = replaceAll(data, ' ', '')
+data = replaceAll(data, '"', '')
+data = replaceAll(data, '{', '')
+data = replaceAll(data, '},', ' ; ')
+data = replaceAll(data, ':', ' ')
+data = replaceAll(data, ',', ' ; ')
+console.log(data)
+data = data.split(' ');
+console.log(data)
 saveData(data, fileName);
 });
 
