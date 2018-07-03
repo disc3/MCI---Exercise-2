@@ -112,7 +112,12 @@ function exportToCsv(filename, rows) {
         var processRow = function (row) {
             var finalVal = '';
             for (var j = 0; j < row.length; j++) {
-                var innerValue = row[j] === null ? '' : row[j].toString();
+                try{
+                    var innerValue = row[j] === null ? '' : row[j].toString();
+                } catch {
+                    row[j] = ' ';
+                    innerValue = ' ';
+                }
                 if (row[j] instanceof Date) {
                     innerValue = row[j].toLocaleString();
                 };
@@ -152,7 +157,7 @@ function exportToCsv(filename, rows) {
     
     
 
-var data = [[json.pages[0].questions[0].rows[0].text, result.data.QualityData["Uebersicht"]],
+try{var data = [[json.pages[0].questions[0].rows[0].text, result.data.QualityData["Uebersicht"]],
 [json.pages[0].questions[0].rows[1].text, result.data.QualityData["Struktur"]],
 [json.pages[0].questions[0].rows[2].text, result.data.QualityData["EaseOfUse"]],
 [json.pages[0].questions[0].rows[3].text, result.data.QualityData["Design"]],
@@ -168,7 +173,10 @@ var data = [[json.pages[0].questions[0].rows[0].text, result.data.QualityData["U
 [json.pages[1].questions[2].items[1].title, result.data.Hoechstpreis["leastamount"]],
 
 [json.pages[2].questions[0].name, result.data.Vorschlag_Umfrage]
-]
+]}catch{
+    alert("Bitte neustarten und alle Felder ausfüllen")
+    loication.reload()
+}
 console.log(json.pages[0].questions[0].rows[0].text);
 console.log(data);
 fileName = "HappyPlantSurvey.csv";
