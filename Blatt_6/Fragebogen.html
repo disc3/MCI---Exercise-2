@@ -56,32 +56,32 @@ var json = { title: "Happy Plants Wearable-Application Fragebogen", showProgress
                 { value: "neutral", text: "neutral" },
                 { value: "mehr", text: "mehr" },
                 { value: "völlig", text: "völlig" }],
-            rows: [{ value: "Das App Design ist übersichtlich?", text: "Das App Design ist übersichtlich!"},
-                { value: "Hauptmenü und Subfenster sind gut strukturiert?", text: "Hauptmenü und Subfenster sind gut strukturiert!" },
-                { value: "Ich habe mich gleich in der App zurechtgefunden?", text: "Ich habe mich gleich in der App zurechtgefunden!" },
-                { value: "Das Design finde ich ansprechend?", text: "Das Design finde ich ansprechend!" },
-                { value: "Die angezeigten Daten finde ich informativ", text: "Die angezeigten Daten finde ich informativ!" }]},
-        { type: "rating", name: "satisfaction", title: "Wie zufrieden sind Sie mit der App?",
+            rows: [{ value: "Uebersicht", text: "Das App Design ist übersichtlich!"},
+                { value: "Struktur", text: "Hauptmenü und Subfenster sind gut strukturiert!" },
+                { value: "EaseOfUse", text: "Ich habe mich gleich in der App zurechtgefunden!" },
+                { value: "Design", text: "Das Design finde ich ansprechend!" },
+                { value: "Information", text: "Die angezeigten Daten finde ich informativ!" }]},
+        { type: "rating", name: "Zufriedenheit", title: "Wie zufrieden sind Sie mit der App?",
             mininumRateDescription: "nicht zufrieden", maximumRateDescription: "sehr zufrieden" },
-        { type: "rating", name: "recommend friends", visibleIf: "{satisfaction} > 3",
+        { type: "rating", name: "Weiterempfehlung", //visibleIf: "{Zufriedenheit} > 3",
             title: "Wie wahrscheinlich ist es, dass Sie diese App an Freunde oder Kollegen weiterempfehlen?",
             mininumRateDescription: "sehr unwahrscheinlich", maximumRateDescription: "sehr wahrscheinlich" },
-        { type: "comment", name: "suggestions", title:"Was würde diese App für sie attraktiver machen?", }
+        { type: "comment", name: "Vorschlag_App", title:"Was würde diese App für sie attraktiver machen?", }
     ]},
     {questions: [
-        { type: "radiogroup", name: "price to competitors",
+        { type: "radiogroup", name: "Nutzen",
             title: "Verglichen mit anderen Wearable Apps finde ich diese App:",
             choices: ["sehr unnütz","unnütz", "neutral", "nützlich", "sehr nützlich"]},
-        { type: "radiogroup", name: "price", title: "Wie sollte der Preis der App gestaltet sein?",
+        { type: "radiogroup", name: "Preisvorschlag", title: "Wie sollte der Preis der App gestaltet sein?",
             choices: ["kostenlos",
                 "weniger als 1 Euro",
                 "weniger als 2 Euro","weniger als 5 Euro", "mehr als 5 Euro"]},
-        { type: "multipletext", name: "pricelimit", title: "Was ist der.. ",
+        { type: "multipletext", name: "Hoechstpreis", title: "Was ist der.. ",
             items: [{ name: "mostamount", title: "höchste Betrag den Sie für diese oder eine vergleichbare App bezahlen würden" },
                 { name: "leastamount", title: "niedrigste Betrag den Sie für diese oder eine vergleichbare App angemessen finden" }]}
     ]},
     { questions: [
-        { type: "text", name: "recommendations",
+        { type: "text", name: "Vorschlag_Umfrage",
             title: 'Danke, dass Sie an unserer Studie teilgenommen haben. Falls Sie noch Anregungen zu unserer Studie oder zu unserer App haben, tragen sie diese bitte in das untere Feld ein. Drücken Sie "Complete", um die Studie abzuschließen'}
     ]}
 ]};
@@ -108,19 +108,71 @@ survey.onComplete.add(function(result) {
         window.URL.revokeObjectURL(url);
     };
 }());
+function exportToCsv(filename, rows) {
+        var processRow = function (row) {
+            var finalVal = '';
+            for (var j = 0; j < row.length; j++) {
+                var innerValue = row[j] === null ? '' : row[j].toString();
+                if (row[j] instanceof Date) {
+                    innerValue = row[j].toLocaleString();
+                };
+                var result = innerValue.replace(/"/g, '""');
+                if (result.search(/("|,|\n)/g) >= 0)
+                    result = '"' + result + '"';
+                if (j > 0)
+                    finalVal += ',';
+                finalVal += result;
+            }
+            return finalVal + '\n';
+        };
 
-var data = JSON.stringify(result.data);
+        var csvFile = '';
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+
+        var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) { // feature detection
+                // Browsers that support HTML5 download attribute
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+    }
+    
+    
+    
+
+var data = [[json.pages[0].questions[0].rows[0].text, result.data.QualityData["Uebersicht"]],
+[json.pages[0].questions[0].rows[1].text, result.data.QualityData["Struktur"]],
+[json.pages[0].questions[0].rows[2].text, result.data.QualityData["EaseOfUse"]],
+[json.pages[0].questions[0].rows[3].text, result.data.QualityData["Design"]],
+[json.pages[0].questions[0].rows[4].text, result.data.QualityData["Struktur"]],
+
+[json.pages[0].questions[1].title, result.data.Zufriedenheit],
+[json.pages[0].questions[2].title, result.data.Weiterempfehlung],
+[json.pages[0].questions[3].title, result.data.Vorschlag_App],
+
+[json.pages[1].questions[0].title, result.data.Nutzen],
+[json.pages[1].questions[1].title, result.data.Preisvorschlag],
+[json.pages[1].questions[2].items[0].title, result.data.Hoechstpreis["mostamount"]],
+[json.pages[1].questions[2].items[1].title, result.data.Hoechstpreis["leastamount"]],
+
+[json.pages[2].questions[0].name, result.data.Vorschlag_Umfrage]
+]
+console.log(json.pages[0].questions[0].rows[0].text);
+console.log(data);
 fileName = "HappyPlantSurvey.csv";
-data = replaceAll(data, ' ', '')
-data = replaceAll(data, '"', '')
-data = replaceAll(data, '{', '')
-data = replaceAll(data, '},', ' ; ')
-data = replaceAll(data, ':', ' ')
-data = replaceAll(data, ',', ' ; ')
-console.log(data)
-data = data.split(' ');
-console.log(data)
-saveData(data, fileName);
+exportToCsv(fileName,data)
 });
 
 survey.render("surveyElement");
